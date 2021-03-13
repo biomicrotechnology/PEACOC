@@ -4,18 +4,18 @@
 settings:
   data_id: ANIMAL_BLOCK_ELECTRODE
 
-  code_path: /PACKAGE_DIR/EAdetection
+  code_path: /PACKAGE_DIR/PEACOC
 
-  runfiles: /PACKAGE_DIR/EAdetection/runthrough
+  runfiles: /PACKAGE_DIR/PEACOC/runthrough
 
   logging_enabled: True
 
 
 config_files:
 
-  display: /PACKAGE_DIR/EAdetection/config/configDisplay.yml # leave out to get default in EAdetection/config
+  display: /PACKAGE_DIR/PEACOC/config/configDisplay.yml # leave out to get default in PEACOC/config
 
-  analysis: /PACKAGE_DIR/EAdetection/config/configAnalysis.yml  # leave out to get default in EAdetection/config
+  analysis: /PACKAGE_DIR/PEACOC/config/configAnalysis.yml  # leave out to get default in PEACOC/config
 
 
 data_paths:
@@ -28,7 +28,7 @@ data_paths:
 
   raw_array: default #loaded from here and saved when running resampling/preprocessing --> python array
 
-  som: /PACKAGE_DIR/EAdetection/config/som.h5 #only needed for classifying bursts
+  som: /PACKAGE_DIR/PEACOC/config/som.h5 #only needed for classifying bursts
 
 
 #TO-DO: enter-feed setup file and set params

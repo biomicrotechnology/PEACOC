@@ -2,9 +2,9 @@
 #### SEE: virtualenv_usage.txt
 
 #install requirements for python 3
-pip3 install -r /home/weltgeischt/workspace/EAdetection/requirements.txt
+pip3 install -r /home/weltgeischt/workspace/PEACOC/requirements.txt
 
 #...for python 2
-pip install -r /home/weltgeischt/workspace/EAdetection/requirements.txt
+pip install -r /home/weltgeischt/workspace/PEACOC/requirements.txt
 
-# NOTE: replace /home/weltgeischt/workspace with the file you have downloaded EAdetection to
+# NOTE: replace /home/weltgeischt/workspace with the file you have downloaded PEACOC to

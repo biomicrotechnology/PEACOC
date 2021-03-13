@@ -1,4 +1,4 @@
-# call: python metadata_diagnostics.py   --format=odml -md /home/weltgeischt/EAdetection_tutorial/run_params/my_recording_params2.yml
+# call: python metadata_diagnostics.py   --format=odml -md /home/weltgeischt/PEACOC_tutorial/run_params/my_recording_params2.yml
 import getopt
 import sys
 import os
@@ -46,7 +46,7 @@ import odml #pip3 install odml
 
 
 
-#paramfile = '/home/weltgeischt/EAdetection_tutorial/run_params/my_recording_params.yml' #todo retrieve from command-line
+#paramfile = '/home/weltgeischt/PEACOC_tutorial/run_params/my_recording_params.yml' #todo retrieve from command-line
 aRec = eam.Rec(init_ymlpath=paramfile)
 results = hf.open_hdf5(aRec.resultsfileH) #this opens the main results file
 

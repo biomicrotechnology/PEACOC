@@ -1,5 +1,5 @@
-#1) cd <directory where you saved EAdetection>
-#2) cd EAdetection
+#1) cd <directory where you saved PEACOC>
+#2) cd PEACOC
 #3) ipython --pylab #to start python
 import core.ea_management as eam
 import core.helpers as hf
@@ -11,7 +11,7 @@ ymlfile = 'PATH_TO_YMLFILE' #this is the file you used in commandline_runthrough
 ymlfile = '/media/weltgeischt/MALWINE/SCOOSIE/DATA/yml_setups/NP12_ipsi1_01_000__runparams.yml'
 aRec = eam.Rec(init_ymlpath=ymlfile)
 #or directly for the data (set the sompath directly, if you want colorfully plotted bursts!)
-aRec = eam.Rec(init_datapath='/media/weltgeischt/MALWINE/SCOOSIE/ANIMAL_DATA/NP12/NP12_ipsi1/NP12_ipsi1_01_000/NP12_ipsi1_01_000__blipSpy.h5',sompath='/home/weltgeischt/workspace/EAdetection/config/som.h5')
+aRec = eam.Rec(init_datapath='/media/weltgeischt/MALWINE/SCOOSIE/ANIMAL_DATA/NP12/NP12_ipsi1/NP12_ipsi1_01_000/NP12_ipsi1_01_000__blipSpy.h5',sompath='/home/weltgeischt/workspace/PEACOC/config/som.h5')
 aRec.plot(['raw','spikes','bursts'])
 
 

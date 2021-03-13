@@ -2,19 +2,19 @@
 
 
 #run through individual steps (loading and resampling, checking and entering polarity, detect and mark artifacts, detect discharges and classify bursts)
-python LOCATION_OF_PACKAGE/EAdetection/runthrough/rawToResampled.py LOCATION_OF_PARAMS/5_21d_nostim000_HCi1__runparams.yml
-python LOCATION_OF_PACKAGE/EAdetection/runthrough/polarityCheck.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
-python LOCATION_OF_PACKAGE/EAdetection/runthrough/artifactCheck.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
-python LOCATION_OF_PACKAGE/EAdetection/runthrough/LFPtoBursts.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
+python LOCATION_OF_PACKAGE/PEACOC/runthrough/rawToResampled.py LOCATION_OF_PARAMS/5_21d_nostim000_HCi1__runparams.yml
+python LOCATION_OF_PACKAGE/PEACOC/runthrough/polarityCheck.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
+python LOCATION_OF_PACKAGE/PEACOC/runthrough/artifactCheck.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
+python LOCATION_OF_PACKAGE/PEACOC/runthrough/LFPtoBursts.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
 
 
 #run through everything in one go
-python LOCATION_OF_PACKAGE/EAdetection/runthrough/runall.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
+python LOCATION_OF_PACKAGE/PEACOC/runthrough/runall.py LOCATION_OF_PARAMS/PJ225_21d_nostim000_HCi1__runparams.yml
 
 #for me that is
 
-python /home/weltgeischt/workspace/EAdetection/runthrough/runall.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
-python /home/weltgeischt/workspace/EAdetection/runthrough/artifactCheck.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
+python /home/weltgeischt/workspace/PEACOC/runthrough/runall.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
+python /home/weltgeischt/workspace/PEACOC/runthrough/artifactCheck.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
 
 
-python /home/weltgeischt/workspace/EAdetection/runthrough/runall.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
+python /home/weltgeischt/workspace/PEACOC/runthrough/runall.py /home/weltgeischt/EXAMPLES/Enya/yml_setup/EP32_1Hz1_HCi1.yml
