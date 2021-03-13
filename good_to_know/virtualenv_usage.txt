@@ -1,0 +1,32 @@
+#INSTALL
+#linux:
+pip install virtualenvwrapper
+#windows:
+pip install virtualenvwrapper-win
+
+
+
+#create virtualenv
+mkvirtualenv my-new-project
+#or if you are on a 3-default machine
+mkvirtualenv --python=python3 my-new-project
+
+#or for python 3
+mkvirtualenv --python=python3 my-new-project
+
+
+#show virtualenvs available
+workon
+
+#switch to a virtual environment
+workon my-new-project
+
+#leave the venv you are in
+deactivate
+
+###--> its recommened to install requirements in a new venv and always run the program from there
+
+
+#MORESTUFF
+#find out which python the venv is using
+readlink -f $(which python) | xargs -I % sh -c 'echo -n "%: "; % -V'

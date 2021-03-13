@@ -1,0 +1,10 @@
+###--> its recommened to install requirements in a separate virtual environment and always run the program from there
+#### SEE: virtualenv_usage.txt
+
+#install requirements for python 3
+pip3 install -r /home/weltgeischt/workspace/EAdetection/requirements.txt
+
+#...for python 2
+pip install -r /home/weltgeischt/workspace/EAdetection/requirements.txt
+
+# NOTE: replace /home/weltgeischt/workspace with the file you have downloaded EAdetection to

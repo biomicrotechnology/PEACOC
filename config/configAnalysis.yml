@@ -1,0 +1,145 @@
+##contains default parameter settings for ed_detection and ea_analysis
+
+path_ext:
+    raw_ext: __raw500.h5
+    results_ext: __blipSpy.h5
+    polarity_ext: __polarity.txt
+    artifact_ext: __artifacts.txt
+    quality_ext: __quality.txt
+
+#settings specifically for multiprocessing
+Multiprocessing:
+
+    EdDetection:
+        flag: False
+        dicedur: 600. #for dicing larger datasets, can save a lot of time
+
+    SpikeSorting:
+        flag: False
+        bunch_int: 300 #seconds; helps to efficiently pick out spikes from snippets for partial sorting --> inf if sorting all spikes directly
+        Nspikes_max: 500 #int or 'inf', this number of spikes will be used generate the clustering onto which the remaining spikes will be projected
+
+    BurstDetection:
+        flag: False
+        minspikes_block: 500 # int giving min. nb of spikes in processed block if multiprocessing for burstclassification/detection, otherwise inf
+        minburstdiff: 3.5 # should be minimally BurstDetection:mergelim
+
+
+##ed_detection
+
+Preprocessing:
+    groupkey: raw_data
+    sr: 500. #Hz; target samplingrate
+    mindur_snip: 360. # s; when slicing the trace for fast resampling minimal duration of slice, actual slicewidth: next power of 2
+    overlap_frac: 0.16666 # ; overlap of window slices
+    sr_before: # Hz; original samplingrate
+    moreinfo: {} # ;other info contained in NEO-obj
+    chanid:  # ; to re-identify in original data file
+
+
+Polarity:
+    polarity: neg # ; can be of [neg,pos,mix] depending on discharge polarity
+    checked: False # ; gets set to true when set_polartiy was called
+
+ArtifactDetection:
+    window: 1. #s; window width for running rms
+    high_thresh: 4. # z; minimal voltage score to be reached to be considered
+    low_thresh: 2. # z; voltage score determining the extent of the window to be consindered wherin high_thresh has happend
+    high_mindur: 0.5 # s; minmal duration of rms trace being above high_thresh
+    low_mindur: 1.2 # s; minimal duration of artifact snippet
+    int_thresh: 0.12 # s; minimal interval between zero-crossings of voltage in defined possible artifact window
+    mindur_stumps: 0.008 # s; minimal duration of equal values (maxdiff_stumps) above zlim
+    mindur_teeth: 0.03 # s; minimal duration of monotonous values (maxdiff_teeth) above zlim
+    maxdiff_stumps: 1.e-3 # s; see mindur_stumps
+    maxdiff_teeth: 1.e-2 # s; see mindur_stumps
+    zlim: 5. # z; minimal voltage-scores for teeths or stumps
+    checked: False # ; is set to true when plotcheck_artifacts was called
+    save_figs: True
+
+
+EdDetection:
+    groupkey: dischargedict_raw #the upper grouplevel where results will be saved
+    offset: 600. # s; time omitted at the beginning of the recording (e.g. anaesthesia recovery)
+    marg_arts: 3. # s; safety-margin around big artifacts
+    marg_sats: 2. # s; safety-margin around point artifacts (stumps & teeth)
+    mindist_arts: 100. # s; artifacts closer togehter will be merged
+    avg_lim: [4.,40.] # Hz; frequency band in which average-power is evaluated
+    window: 128 # pts; window-width for fft to get average-power,should be power of 2
+    norm: [5,95] # %; percentile ranges for dynamic normalization of power-spectrum
+    thr_range: [-0.5,6.] # z; threshold range applied to average-power to find optimal threshold
+    thr_res: 0.05 # z;step for thr_range
+    peakperc: 35. # %; peakperc lowest nonzero dy/dx slope values in fn(thr) will be used to estimate shallowest region (cp. threshmode)
+    dtime: 0.083333 # s;deadtime before another discharge can be detected
+    amp_thresh: 4.5 # z; threshold for detecting amplitude discharges that were not found by spectral analysis
+    spike_margin: 0.2 # s; region before and after each discharge detected by spectral method that is cut to yield the compound ea-free-trace subjected to further removal of amplitude discharges
+    threshmode: firstcross # ;mode for detection of optimal threshold on average_power (can be bump,firstcross,man(for manual))
+    consider_artifacts: True # ; if False the artifact times belonging to recording will be disregarded 
+    prune_on: True # ; if True dtime will be applied for each thr in thr_range when caluclating fn(thr)
+    manthresh: # z;if threshold is manually set (threshmode not 'firstcross' or 'bump')
+    selected_thresh: False # ; if threshold has been selected in plotpick_thresholds
+    save_data: True
+    save_figs: True
+    retrieve_apower: True #when avg power trace already exists, do not re-calculate it
+    save_apower: True #save avg power trace (will save you some calculations when you run again)
+
+
+
+SpikeSorting:
+    groupkey: dischargedict_cleaned #the upper grouplevel where results will be saved
+    minsearchwin: [0.1,0.1] # s; time around ([before,after]) a discharge detected in which minimum(neg polarity)/maximum(pos) can be detected for proper alignment before PCA
+    cutwin: [0.1,0.2] # s; time around minimum that is considered for PCA
+    savgol_params: [21,2] # pts/ ; parameters of savitzky-golay filter applied on waveform before PCA
+    ncomp_list: [3] # ;list of number of components to be calculated and visualized to select proper ncomp-nclust pair for run_remove_noiseclust
+    nclust_list: [5] # ;list of number of clusters to be calculated and visualized to select proper ncomp-nclust pair for run_remove_noiseclust
+    ncomp: 3 # ; number of principle components to be used in run_remove_noiseclust
+    nclust: 5 # ;number of clusters to be used in run_remove_noiseclust
+    noiseclust: [5] # ;list of cluster-ids that are considered as noise in run_remove_noiseclust
+    doublethresh: 0.09 #sparse spikes whose alignment-centers are closer than this will be eligible for 'doublet', i.e. only the closest in a doublet burst will be a true spike
+    visually_checked: False
+    save_data: True
+    save_figs: True
+
+
+
+##ea_analysis
+BurstDetection:
+    groupkey: bursts
+    maxdist: 2.5 # s; the maximal inter-discharge-interval within a burst
+    mergelim: 3.5 # s; two bursts closer than mergelim are merged into one
+    bins: 200 # ; number of bins for calculating peakIDI as burstfeature --> this gets only executed, if you call for it
+    binborders: [0.083333,150.] # s; see bins, the lower and upper limit of the historgram used to get peakIDI
+    save_data: False
+
+
+BurstClassification:
+    groupkey: burstclasses
+    nmin: 5 # ;minimal number of discharges in burst to be admitted for classification on SOM
+    sompath:  # ;path to self-organizing map bursts of this recording where projected on
+    features: [] # ;list of burst features (strs) used on map --> is read out from som at sompath
+    weights: [] # ;list of weights (as floats) assigned to the featurs --> is read out from som at sompath
+    save_data: True
+    save_figs: True
+
+
+StateAnalysis:
+    groupkey: states
+    maxint_ips: 180. # s; maximal interval-severe-interval within IP (ictal period)
+    depri_thresh: 120. # s; when interval between IP and next EA-burst is longer, this interval is considered depression
+    cpt_thresh: 1.5 # z; to detect pre- and post-IP increase in inter EA-burst intervals --> amplitude threshold for change
+    cpt_drift: 0.1 # z; see cpt_thresh --> preventing change detection due to drift
+    befbuff: 180. # s; time at beginning of recording declared as void if not IP, because we do not know what happened before
+    endbuff: 300. # s; time at end of recording declared as void if not IP or depression, because we do not know what happens after
+    minTotalIIP: 900. # s; minmal total duration of IIPs (inter-ictal-period) in a recording to calculate pre and post increase
+    MfracMax: 0.15 # ; fraction of time that needs to be covered by denseclass for an IIP period to be labeled 'dense'
+    mindurArtifact: 10 # s;minimal duration of artifact to be considered a state of its own
+    severe: ['XL','L'] # ;labels of severe events
+    denseclasses: ['M'] # ;see MfracMax
+    increaseEnabled: True # ;is set to False if (cumulative duration of IIPs in recording)< minTotalIIP
+    save_data: True
+    save_figs: True
+
+Diagnostics:
+    groupkey: diagnostics
+
+quality_range: ['free','bad','weak','ok','nice']
+

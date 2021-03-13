@@ -1,0 +1,90 @@
+## parameters for runnthrough smr --> saved resampled data
+## USING multiprocessing!
+
+settings:
+  data_id: ANIMAL_BLOCK_ELECTRODE
+
+  code_path: /PACKAGE_DIR/EAdetection
+
+  runfiles: /PACKAGE_DIR/EAdetection/runthrough
+
+  logging_enabled: True
+
+
+config_files:
+
+  display: /PACKAGE_DIR/EAdetection/config/configDisplay.yml # leave out to get default in EAdetection/config
+
+  analysis: /PACKAGE_DIR/EAdetection/config/configAnalysis.yml  # leave out to get default in EAdetection/config
+
+
+data_paths:
+    
+  #if 'default' the path will be set according to analysis:savepaths:data_save
+
+  artifacts:  default #loaded from here and saved here when running semi-automatic artifact detection --> .txt file
+
+  polarity:  default #loaded from here and saved when running polarity-inspection --> .txt file
+
+  raw_array: default #loaded from here and saved when running resampling/preprocessing --> python array
+
+  som: /PACKAGE_DIR/EAdetection/config/som.h5 #only needed for classifying bursts
+
+
+#TO-DO: enter-feed setup file and set params
+
+analysis:
+
+  savepaths: 
+    data_save: /DATADIR/ANIMAL_BLOCK_ELECTRODE
+    fig_save: /FIGDIR/ANIMAL_BLOCK_ELECTRODE
+
+
+  run: [EdDetection, SpikeSorting, BurstClassification, Diagnostics]
+
+  save_figs: True   
+
+  EdDetection: 
+    interactive: True
+    setparams:
+      offset: 0
+
+  SpikeSorting: 
+    interactive: True
+    setparams:
+
+  BurstClassification:
+    setparams: 
+
+  StateAnalysis:
+    setparams:
+
+  Diagnostics:
+    setparams:
+
+
+Multiprocessing:
+  setparams:
+    EdDetection:
+        flag: True
+
+    SpikeSorting:
+        flag: True
+
+    BurstDetection:
+        flag: True
+
+
+
+
+
+preprocessing:
+    
+  loading:
+      source: /SOURCEDIR/THIS_SOURCE_FILE
+
+      channel: interactive # either the channel ID if known or interactively select the channel, if channel eg. 'HC1_114'
+
+      multiprocessing: False
+
+

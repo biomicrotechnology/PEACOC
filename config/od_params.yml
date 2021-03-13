@@ -1,0 +1,14 @@
+window: 128
+norm: [5,95]
+avg_lim: [4.,40.]
+thr_range: [-0.5,6.] # z; threshold range applied to average-power to find optimal threshold
+thr_res: 0.05 # z;step for thr_range
+peakperc: 35. # %; peakperc lowest nonzero dy/dx slope values in fn(thr) will be used to estimate shallowest region (cp. threshmode)
+dtime:  0.083333
+sr: 512.
+prune_on: True
+threshmode: bump
+ampz_thresh: 4.5
+burst_thresh: 2.5
+stim_thresh: 10.
+stimdur: 5

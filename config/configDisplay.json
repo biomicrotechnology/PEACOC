@@ -1,0 +1,103 @@
+{
+	"name_ranks": {
+		"XL": 0,
+		"L": 1,
+		"M": 2,
+		"S": 3,
+		"XS": null
+	},
+	"severe": [
+		"XL",
+		"L"
+	],
+	"weak": [
+		"XS",
+		"S"
+	],
+	"xs_color": "skyblue",
+	"si1_color": "darkviolet",
+	"nhatch": 3,
+	"singlet_marg": 2.5,
+	"free_margin": 1.5,
+	"freedist_min": 3,
+	"relative_heights": {
+		"spikes": 1,
+		"bursts": 2,
+		"states": 1.5,
+		"singlets": 1,
+		"artifacts": 1,
+		"free": 2
+	},
+	"hatchdict": {
+		"IP": {
+			"color": "k",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"IIP": {
+			"color": "w",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"IIPshort": {
+			"hatch": ".",
+			"color": "none",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"temp": {
+			"hatch": "*",
+			"fill": true,
+			"color": "b",
+			"ec": "w",
+			"lw": 0.5
+		},
+		"void": {
+			"hatch": ".",
+			"color": "none",
+			"ec": "b",
+			"lw": 0.5
+		},
+		"art": {
+			"color": "khaki",
+			"ec": "khaki",
+			"alpha": 0.4,
+			"lw": 0.5
+		},
+		"preUp": {
+			"hatch": "/",
+			"fill": false,
+			"color": "none",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"postUp": {
+			"hatch": "\\",
+			"fill": false,
+			"color": "none",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"depr": {
+			"hatch": "-",
+			"fill": false,
+			"color": "none",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"dense": {
+			"hatch": "x",
+			"fill": false,
+			"color": "none",
+			"ec": "k",
+			"lw": 0.5
+		},
+		"Mdense": {
+			"hatch": "x",
+			"fill": false,
+			"color": "none",
+			"ec": "g",
+			"lw": 0.5
+		}
+	}
+}

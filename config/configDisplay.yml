@@ -1,0 +1,107 @@
+name_ranks: #of bursts: to convert classification-dict cluster-integers into meaningful classification names
+  XL: 0
+  L: 1
+  M: 2
+  S: 3
+  XS:
+
+severe: ['XL','L'] #EA-classes regarded as severe
+weak: ['XS','S'] #EA-classes
+xs_color: 'skyblue' # the guys that did not make it on the map
+si1_color: 'darkviolet' #bursts classified
+nhatch:  3 #for setting hatch-density in the state-plot
+
+load_style:
+    XL:
+      color: 'darkorange'
+      cname: 'high-load'
+    L:
+      color: 'darkorange'
+      cname: 'high-load'
+    M:
+      color: 'olivedrab'
+      cname: 'med.-load'
+    S:
+      color: '#4476bd'
+      cname: 'low-load'
+    XS:
+      color: '#4476bd'
+      cname: 'low-load'
+
+
+singlet_marg: 2.5 # s; margin around singlet where no other spike should happen (should be the same as in configAnaylsis:BurstDetection:maxdist)
+free_margin: 1.5 # s; safety-interval around a spike to define time free of discharges
+freedist_min: 3 # s; usually: 2*free_margin, unless you want to have a minimal duration of free-snippet
+
+
+relative_heights:
+  spikes: 1.
+  bursts: 2.
+  states: 1.5
+  singlets: 1.
+  artifacts: 1.
+  free: 2.
+
+
+hatchdict: #for coloring/hatching states
+  IP:
+    color: k
+    ec: k
+    lw: 0.5
+  IIP:
+    color: w
+    ec: k
+    lw: 0.5
+  IIPshort:
+    hatch: '.'
+    color: 'none'
+    ec: 'k'
+    lw: 0.5
+  temp:
+    hatch: '*'
+    fill: True
+    color: b
+    ec: w
+    lw: 0.5
+  void:
+    hatch: '.'
+    color: 'none'
+    ec: 'b'
+    lw: 0.5
+  art:
+    color: khaki
+    ec: khaki
+    alpha: 0.4
+    lw: 0.5
+  preUp:
+    hatch: '/'
+    fill: False
+    color: 'none'
+    ec: k
+    lw: 0.5
+  postUp:
+    hatch: '\'
+    fill: False
+    color: 'none'
+    ec: k
+    lw: 0.5
+  depr:
+    hatch: '-'
+    fill: False
+    color: 'none'
+    ec: k
+    lw: 0.5
+  dense:
+    hatch: 'x'
+    fill: False
+    color: 'none'
+    ec: k
+    lw: 0.5
+  Mdense:
+    hatch: 'x'
+    fill: False
+    color: 'none'
+    ec: g  
+    lw: 0.5    
+
+

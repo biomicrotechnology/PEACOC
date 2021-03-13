@@ -1,0 +1,355 @@
+super:
+  analysis_config:
+    value: CFG_ANALYSIS
+    dtype: url
+    definition: file with the general analysis parameters
+
+  parameters_run:
+    value: PARAMETERS
+    dtype: url
+    definition: file used to run through (and initialize)
+
+  resultsfile:
+    value: RESULTSFILE
+    dtype: url
+    definition: file in which all analysis results are stored
+
+  rawfile:
+    value: RAWFILE
+    dtype: url
+    definition: file containing raw value that was subjected to analysis
+
+
+
+info:
+  Host:
+    value: HOSTNAME
+    dtype: person
+    definition: machine on which code was run
+
+  Date:
+    value: DATE
+    dtype: date
+    definition: yyyy-mm-dd
+
+
+  Time:
+    value: TIME
+    dtype: time
+    definition: hh:mm:ss
+
+  Method:
+    value: METHOD
+    dtype: text
+    definition: Summary of how value was analysed
+
+  LogFile:
+    value: LOGFILE
+    dtype: url
+    definition: where analysis logs are kept
+
+  User:
+    value: User
+    dtype: person
+    definition: user who ran analysis
+
+  CodeRevision:
+    value: REVISION
+    dtype: text
+    definition: githash
+
+  Class:
+    value: CLASS
+    dtype: text
+    definition: class governing analysis code
+
+  CodeFile:
+    value: CODEFILE
+    dtype: url
+    definition: file containing code
+
+  ResultFigure:
+    value: RESULTFIGURE
+    dtype: url
+    definition: figures generated while executing analysis code
+
+EdDetection:
+
+    groupkey:
+      value: dischargedict_raw
+      dtype: text
+      definition: the upper grouplevel where results will be saved
+
+    offset:
+      value: 0.
+      dtype: float
+      unit: s
+      definition: time omitted at the beginning of the recording (e.g. anaesthesia recovery)
+
+    marg_arts:
+      value: 3.
+      dtype: float
+      unit: s
+      definition: safety-margin around big artifacts
+
+    marg_sats:
+      value: 2.
+      dtype: float
+      unit: s
+      definition: safety-margin around point artifacts (stumps & teeth)
+
+    mindist_arts:
+      value: 100.
+      dtype: float
+      unit: s
+      definition: artifacts closer togehter will be merged
+
+    avg_lim:
+      value: [4.,40.]
+      dtype: float
+      unit: Hz
+      definition: frequency band in which average-power is evaluated
+
+    window:
+      value: 128
+      dtype: int
+      unit: points
+      definition: window-width for fft to get average-power,should be power of 2
+
+    norm:
+      value: [5.,95.]
+      dtype: float
+      unit: percentile
+      definition: percentile ranges for dynamic normalization of power-spectrum
+
+    thr_range:
+      value: [-0.5,6.]
+      dtype: float
+      unit: score
+      definition: threshold range applied to average-power to find optimal threshold
+
+    thr_res:
+      value: 0.05
+      dtype: float
+      unit: score
+      definition: step for thr_range
+
+    peakperc:
+      value: 35.
+      dtype: float
+      unit: percentile
+      definition: peakperc lowest nonzero dy/dx slope values in fn(thr) will be used to estimate shallowest region (cp. threshmode)
+
+    dtime:
+      value: 0.083333
+      dtype: float
+      unit: s
+      definition: deadtime before another discharge can be detected
+
+    amp_thresh:
+      value: 4.5
+      dtype: float
+      unit: score
+      definition: threshold for detecting amplitude discharges that were not found by spectral analysis
+
+    spike_margin:
+      value: 0.2
+      dtype: float
+      unit: s
+      definition: region before and after each discharge detected by spectral method that is cut to yield the compound ea-free-trace subjected to further removal of amplitude discharges
+
+    threshmode:
+      value: firstcross
+      dtype: text
+      definition: mode for detection of optimal threshold on average_power (can be bump,firstcross,man(for manual))
+
+    consider_artifacts:
+      value: True
+      dtype: boolean
+      definition: if False the artifact times belonging to recording will be disregarded
+
+    prune_on:
+      value: True
+      dtype: boolean
+      definition: if True dtime will be applied for each thr in thr_range when caluclating fn(thr)
+
+    manthresh:
+      value: False
+      dtype: float
+      unit: score
+      definition: if threshold is manually set (threshmode not 'firstcross' or 'bump')
+
+    selected_thresh:
+      value: True
+      dtype: boolean
+      definition: if threshold has been selected in plotpick_thresholds
+
+    save_apower:
+      value: True
+      dtype: boolean
+      definition: save avg power trace (will save you some calculations when you run again)
+
+SpikeSorting:
+
+  groupkey:
+    value: dischargedict_cleaned
+    dtype: text
+    definition: the upper grouplevel where results will be saved
+
+  minsearchwin:
+    value: [0.1,0.1]
+    unit: s
+    dtype: float
+    definition: time around ([before,after]) a discharge detected in which minimum(neg polarity)/maximum(pos) can be detected for proper alignment before PCA
+
+  cutwin:
+    value: [0.1,0.2]
+    unit: s
+    dtype: float
+    definition: time around minimum that is considered for PCA
+
+  savgol_params:
+    value: [21,2]
+    unit: points
+    dtype: int
+    definition: parameters of savitzky-golay filter applied on waveform before PCA
+
+  ncomp_list:
+    value: [3]
+    dtype: int
+    definition:  list of number of components to be calculated and visualized to select proper ncomp-nclust pair for run_remove_noiseclust
+
+  nclust_list:
+    value: [5]
+    dtype: int
+    definition: list of number of clusters to be calculated and visualized to select proper ncomp-nclust pair for run_remove_noiseclust
+
+  ncomp:
+    value: 3
+    dtype: int
+    definition: number of principle components to be used in run_remove_noiseclust
+
+  nclust:
+    value: 5
+    dtype: int
+    definition: number of clusters to be used in run_remove_noiseclust
+
+  noiseclust:
+    value: [5]
+    dtype: int
+    definition: list of cluster-ids that are considered as noise in run_remove_noiseclust
+
+  doublethresh:
+    value: 0.09
+    unit: s
+    dtype: float
+    definition: sparse spikes whose alignment-centers are closer than this will be eligible for 'doublet', i.e. only the closest in a doublet burst will be a true spike
+
+  visually_checked:
+    value: False
+    dtype: boolean
+    definition: gets set to True once interactive plotting was called (which enables manual noise cluster selection)
+
+  save_data:
+    value: True
+    dtype: boolean
+
+  save_figs:
+    value: True
+    dtype: boolean
+
+
+
+
+BurstClassification:
+
+  groupkey:
+    value: burstclasses
+    dtype: text
+
+  nmin:
+    value: 5
+    dtype: int
+    definition: minimal number of discharges in burst to be admitted for classification on SOM
+
+  save_data:
+    value: True
+    dtype: boolean
+
+  save_figs:
+    value: True
+    dtype: boolean
+
+  maxdist:
+    value: 2.5
+    unit: s
+    dtype: float
+    definition: the maximal inter-discharge-interval within a burst
+
+  mergelim:
+    value: 3.5
+    unit: s
+    dtype: float
+    definition: two bursts closer than mergelim are merged into one
+
+  features:
+    value: ['b_n','isi_mean','isi_std']
+    dtype: text
+    definition: features used for burst classification, b_n=number of spikes
+
+  sompath:
+    value: SOMPATH
+    dtype: url
+    definition: path to the SOM ontio which the bursts were projected
+
+  weights:
+    value: [2.,2.,1.]
+    dtype: float
+    definition: weights applied to features
+
+Diagnostics:
+  rate(spikes):
+    value: 999
+    unit: 1/s
+    dtype: float
+    definition: rate of epileptiform spikes
+
+  rate(high-load):
+    value: 999.
+    unit: 1/min
+    dtype: float
+    definition: rate of high-load bursts
+
+  tfrac(high-load):
+    value: 999.
+    dtype: float
+    definition: fraction of time spent in high-load bursts
+
+  tfrac(bursts):
+    value: 999.
+    dtype: float
+    definition: fraction of time spent in bursts (of any kind)
+
+  tfrac(free):
+    value: 999.
+    dtype: float
+    definition: fraction of time spent outside of bursts
+
+  burstiness:
+    value: 999.
+    dtype: float
+    definition: burstiness (cp. Goh & Barabasi 2008) of epileptiform spikes
+
+  durAnalyzed:
+    value: 999.
+    unit: min
+    dtype: float
+    definition: duration of recording analyzed (dur-offset-artifacttimes)
+
+  durArtifacts:
+    value: 999.
+    unit: min
+    dtype: float
+    definition: total duration of artifacts in recording
+
+
