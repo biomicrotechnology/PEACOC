@@ -1,4 +1,4 @@
-# PEACOC: Patterns of Epileptiform Activity: a COntinuum-based classification (and detection!)
+# PEACOC: Patterns of Epileptiform Activity: a COntinuum-based Classification (and detection!)
 Publication: Heining, K., Kilias, A., Janz, P., Häussler, U., Kumar, A., Haas, C. A., & Egert, U. (2019). Bursts with high and low load of epileptiform spikes show context-dependent correlations in epileptic mice. Eneuro.
 
 ### 0 – Get prerequisites
@@ -19,7 +19,7 @@ Open your copied template file and use FIND-REPLACE to replace  ...
 ### 3 – Generate SPECIFIC parameter files from template
 See PEACOC/examples/yml_generators.py
 
-### 4 – Run the algorithm!
+### 4 – Run PEACOC!
 See: PEACOC/examples/commandline_runthrough.txt
 
 ### 5 – Harvest results, visualize, explore ...
