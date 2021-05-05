@@ -45,7 +45,7 @@ class Analysis(object):
         if not hasattr(self,'_defaults'):
            
             with open(configpath, 'r') as ymlfile:
-                cfg = yaml.load(ymlfile)
+                cfg = yaml.safe_load(ymlfile)
             self._defaults =  cfg[self.id]
         return self._defaults
     
