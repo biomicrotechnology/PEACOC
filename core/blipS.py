@@ -422,8 +422,9 @@ def getZthresh_derivMethod(fobtrace,threshtrace,peakperc=35.,verbose = False,max
     
     logger.info('Zthresh - derivative method')
     fob_full = fobtrace/float(fobtrace.max())
-    thresh_vec,fob = threshtrace[fob_full>np.unique(fob_full)[0]],fob_full[fob_full>np.unique(fob_full)[0]]#inevitably there are zeros at the end
-    
+    #thresh_vec,fob = threshtrace[fob_full>np.unique(fob_full)[0]],fob_full[fob_full>np.unique(fob_full)[0]]#inevitably there are zeros at the end
+    conds = (fob_full>np.unique(fob_full)[0]) & (fob_full<np.unique(fob_full)[-1])
+    thresh_vec,fob = threshtrace[conds],fob_full[conds]#inevitably there are zeros at the end
     dfob = np.diff(fob)
     maxDiff = np.sort(dfob)[-int(np.ceil(len(dfob)*peakperc/100.))]
     logger.debug('Zthresh -maxdiff %1.4f'%(maxDiff))
@@ -487,7 +488,7 @@ def getZthresh_derivMethod(fobtrace,threshtrace,peakperc=35.,verbose = False,max
         
         
     if verbose:
-        return (x_thresh,thresh_vec[stab_pt[0]],thresh_vec[stab_pt[1]])#box middel, start,end
+        return (x_thresh,thresh_vec[stab_pt[0]],thresh_vec[stab_pt[1]])#box middel, start,end --> verbose works only with bump!
     else:
         if 'manthresh' in kwargs: return kwargs['manthresh']
         else:return x_thresh
