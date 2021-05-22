@@ -1,4 +1,4 @@
-# PEACOC: Patterns of Epileptiform Activity: a COntinuum-based Classification (and detection!)
+# PEACOC: Patterns of Epileptiform Activity: a COntinuum-based Classification (and detection)
 Publication: [Inserted upon acceptance]
 
 ### 0 – Get prerequisites
