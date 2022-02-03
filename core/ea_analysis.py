@@ -283,7 +283,9 @@ class BurstClassification(Analysis):
             
             self.figsave(f,figname)
             logger.info('Saved whole trace classified at %s'%(figname))
-            
+
+        recObj._burstdict = {}
+        print ('MAPb',len(mapbursts),len(smallbursts),len(recObj.burstdict))
         for burst in mapbursts+smallbursts:
             recObj.burstdict[burst.id] = [burst.roi,burst.rank,burst.si,burst.bmu]
         recObj.burstdict['params'] = ['roi_int','clustid','seizidx','bmu']  
