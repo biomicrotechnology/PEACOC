@@ -139,7 +139,7 @@ def remove_doubleDetected(bliptimes,datatrace,maxDist=0.15,blipWin=[0.05,0.2],sr
         true_blips.append(trueBlip)
         false_blips.append(falseBlip)
     
-    all_true = np.sort(np.r_[true_blips,bliptimes[[np.r_[np.diff(bliptimes)>=maxDist,False]]]])
+    all_true = np.sort(np.r_[true_blips,bliptimes[np.r_[np.diff(bliptimes)>=maxDist,False]]])
     
     if verbose == False:
         return all_true
