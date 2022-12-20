@@ -6,7 +6,7 @@ name = "pypi"
 [packages]
 tables = "*"
 deepdish = "==0.3.6"
-numpy = "*"
+numpy = "<1.2"
 scipy = "*"
 pyyaml = "*"
 neo = "==0.9.0"
