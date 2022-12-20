@@ -1,4 +1,4 @@
-numpy
+numpy<1.2 #numpy.float removed in 1.2.0
 scipy
 pyyaml
 neo==0.9.0 #when working with smr as source files
@@ -7,5 +7,6 @@ scikit-learn>=0.19.1
 matplotlib>=1.5.1
 deepdish==0.3.6 #avoid error reading data as dict instead of np.array
 pandas<1.2 #deepdish.io.save requires pandas.Panel
+tables #required by deepdish
 h5py
 pathos #if using multiprocessing
