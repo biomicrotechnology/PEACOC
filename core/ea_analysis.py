@@ -3,6 +3,7 @@ from __future__ import print_function
 
 import numpy as np
 import os
+import h5py
 import logging
 from matplotlib.pyplot import close
 from matplotlib.pyplot import subplots
@@ -108,14 +109,26 @@ class BurstDetection(Analysis):
             self.setparam('bins','NA')
 
         if self.save_data:
-           logger.info('Saving burstfeatures to dictionary')
-           self.datadict = {}
-           for bb,burst in enumerate(recObj.bursts):
-                 subdict = {key:getattr(burst,key) for key in self.features+['start','stop']}
-                 self.datadict['B'+str(bb+1)] = subdict
-                 
-           self._save_resultsdict(recObj)
-           
+            logger.info('Saving burstfeatures to dictionary')
+
+            #saving bursts
+            allattrkeys =  self.features+['start','stop']
+            with h5py.File(self.recObj.resultsfileH,'r+') as dst:
+                grp, dgrp, mgr = self.makeget_dsgroups(dst)
+
+                for bb,burst in enumerate(recObj.bursts):
+                    btag = 'B%i'%(bb+1)
+                    bgrp = dgrp.create_group(btag)
+                    for attr in allattrkeys:
+                        bgrp.attrs[attr] = getattr(burst,attr)
+
+                #saving methods
+                method_dskeys = ['binborders']
+
+                for key,vals in self.methodsdict.items():
+                    if not key in method_dskeys:
+                        mgr.attrs[key] = getattr(self,key)
+                mgr.create_dataset('binborders',np.array(self.bindborders),dtype='f')
         
         
 class BurstClassification(Analysis):
@@ -297,11 +310,27 @@ class BurstClassification(Analysis):
             datamat = np.vstack( [np.r_[key, np.array(val[0]), np.array(val[1:])] for key, val in recObj.burstdict.items() \
                                   if  not key == 'params'])
             datamat[datamat == None] = np.nan
+
             paramvals = ['key_id', 'start', 'stop'] + recObj.burstdict['params'][1:]
 
-            self.datadict = {'values': datamat.astype('float'),'params': paramvals}
-            self._save_resultsdict(recObj)
-            
+            with h5py.File(self.recObj.resultsfileH,'r+') as dst:
+                grp,dgrp,mgr = self.makeget_dsgroups(dst)
+
+                #filling data
+                dgrp.create_dataset('values',data=datamat,dtype='f')
+                dgrp.create_dataset('params', data=[mystr.encode("ascii", "ignore") for mystr
+                                              in paramvals], dtype='S60')#todo take care at loading here!
+
+                #filling methods
+                for attr in ['maxdist','mergelim','nmin','sompath']:
+                    mgr.attrs[attr] = getattr(self,attr)
+
+                mgr.create_dataset('features',data=[mystr.encode("ascii", "ignore") for mystr
+                                              in self.features], dtype='S60')#todo take care at loading here!
+
+                vals = np.array(self.weights) if type(self.weights) == type([1.0]) else self.weights
+                mgr.create_dataset('weights',data=self.weights,dtype=vals)
+
         
         
         
@@ -424,18 +453,34 @@ class StateAnalysis(Analysis):
         recObj.statedict = pii.states_to_dict(recObj.states)
         if self.save_data:
             logger.info('Saving states to dictionary')
-            self.datadict = recObj.statedict
-            
-            self._save_resultsdict(recObj)
-            
+
+            with h5py.File(self.recObj.resultsfileH,'r+') as dst:
+                grp,dgrp,mgr = self.makeget_dsgroups(dst)
+
+                for key,vals in recObj.statedict.items():
+                    stategr = dgrp.create_group(key)
+                    for attr in vals.keys():
+                        stategr.attrs[attr] = vals[attr]
+
+
         
        
 class Diagnostics(Analysis):
     def __init__(self):
         self.method = 'Diagnostic measures for asssessing severity of epilepsy.'
-        for key,val in list(self.defaults.items()):setattr(self,key,val)
 
     def write(self,recObj):
 
-        self.datadict = {'tfracs': recObj.diagn_tfracs, 'rates': recObj.diagn_rates}
-        self._save_resultsdict(recObj)
+        self.recObj = recObj
+
+        with h5py.File(self.recObj.resultsfileH, 'r+') as dst:
+            grp, dgrp, mgr = self.makeget_dsgroups(dst)
+
+            tgrp = dgrp.create_group('tfracs')
+            for category,val in self.diagn_tfracs.items():
+                tgrp.attrs[category] = val
+
+            rgrp = dgrp.create_group('rates')
+            for category,val in self.diagn_rates.items():
+                rgrp.attrs[category] = val
+

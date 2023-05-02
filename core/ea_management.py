@@ -8,12 +8,13 @@ import numpy as np
 import os
 import io
 import sys
+import h5py
 from glob import glob
 from scipy.stats import scoreatpercentile as scorep
 from matplotlib.pyplot import subplots,gcf
 import matplotlib.patches as patches
 
-from core.helpers import mergeblocks,string_decoder,saveto_hdf5,open_hdf5,read_burstdata
+from core.helpers import mergeblocks,string_decoder,read_burstdata
 from core import artisfaction
 
 logger = logging.getLogger(__name__)
@@ -500,7 +501,10 @@ class Rec(EAPeriod):
 		with io.open(self.configpath_ana, 'r') as ymlfile: self.cfg_ana = yaml.safe_load(ymlfile)        #for [extkey,extval] in self.cfg_ana['path_ext'].items(): setattr(self,extkey,extval)
 
 		try:
-			if raw_from_datapath: self._rawfileH = open_hdf5(self.resultsfileH,'/'+self.cfg_ana['Preprocessing']['groupkey']+'/path')#looks up address of rawfile in hdf5
+			if raw_from_datapath:
+				with h5py.File(self.resultsfileH,'r') as hand:
+					self._rawfileH = hand['/%s'%self.cfg_ana['Preprocessing']['groupkey']].attrs['path'].decode()
+
 			else: self._rawfileH = self.rawfileH
 		except:
 			self._rawfileH = 'NA'
@@ -509,11 +513,8 @@ class Rec(EAPeriod):
 		#self.artifactfile = self.get_filepath(self.artifact_ext)
 		#if not os.path.isfile(self.artifactfile): logger.warning('yml-specified artifact file %s does not exist yet.'%(self.artifactfile))
 		#setting polarity
-		self._polarity = open_hdf5(self.resultsfileH,'/'+self.cfg_ana['EdDetection']['groupkey']+'/data/polarity')
-
-
-
-
+		with h5py.File(self.resultsfileH,'r') as hand:
+			self._polarity = hand['/%s'%self.cfg_ana['EdDetection']['groupkey']].attrs['polarity'].decode()
 
 	def read_from_dict(self,ymldict):
 
@@ -599,11 +600,6 @@ class Rec(EAPeriod):
 
 
 
-	def _save_byGroup(self,data,groupkey,mergewithexisting=True,overwrite_groups=True,
-					   overwrite_file=False):
-
-		saveto_hdf5({groupkey:data}, self.resultsfileH,mergewithexisting=mergewithexisting, overwrite_groups=overwrite_groups,
-					   overwrite_file=overwrite_file)
 
 
 	def get_logger(self,**kwargs):
@@ -726,7 +722,8 @@ class Rec(EAPeriod):
 	@property
 	def sr(self):
 		if not hasattr(self,'_sr'):
-			self._sr = open_hdf5(self.rawfileH, '/data/sr')
+			with h5py.File(self.rawfileH,'r') as hand:
+				self._sr = hand['data'].attrs['sr']
 		return self._sr
 
 	@sr.setter
@@ -735,10 +732,11 @@ class Rec(EAPeriod):
 	@property
 	def _raw(self):
 		if not hasattr(self,'_rawtrace'):
-			try:
-				self._rawtrace = open_hdf5(self.rawfileH, '/data/trace')
-			except:
-				self._rawtrace = open_hdf5(self.rawfileH, '/data')
+			with h5py.File(self._rawfileH,'r') as hand:
+				try:
+					self._rawtrace = hand['/data/trace'][()]#
+				except:
+					self._rawtrace = hand['/data'][()]
 		return self._rawtrace
 
 	@_raw.setter
@@ -748,19 +746,12 @@ class Rec(EAPeriod):
 	def get_groupkey(self,anaclass):
 		return '/'+self.cfg_ana[anaclass]['groupkey']
 
-	@lazy_property
-	def _EDdict(self):
-		return open_hdf5(self.resultsfileH,self.get_groupkey('SpikeSorting'))
-
-	@lazy_property
-	def _EDdict0(self):
-		return open_hdf5(self.resultsfileH,self.get_groupkey('EdDetection'))
-
 
 	@property
 	def _spiketimes(self):
 		if not hasattr(self,'_spiketimesTemp'):
-			self._spiketimesTemp = open_hdf5(self.resultsfileH,self.get_groupkey('SpikeSorting')+'/data/spikes')
+			with h5py.File(self.resultsfileH,'r') as hand:
+				self._spiketimesTemp = hand['%s/data/spikes'%self.get_groupkey('SpikeSorting')][()]
 		return self._spiketimesTemp
 
 	@_spiketimes.setter
@@ -770,13 +761,18 @@ class Rec(EAPeriod):
 
 	@lazy_property
 	def spikes0(self):
-		return open_hdf5(self.resultsfileH,self.get_groupkey('EdDetection')+'/data/spikes')
+		with h5py.File(self.resultsfileH, 'r') as hand:
+			outvals = hand['%s/data/spikes'%self.get_groupkey('EdDetection')][()]
+		return outvals
 
 	@property
 	def stop(self):
 		if not hasattr(self,'_stop'):
-			try: self._stop = open_hdf5(self.resultsfileH,self.get_groupkey('EdDetection')+'/data/t_total')
-			except: self._stop = len(self._raw)/self.sr
+			with h5py.File(self.resultsfileH, 'r') as hand:
+				try:
+					self._stop = hand['%s/data'%self.get_groupkey('EdDetection')].attrs('t_total')
+				except:
+					self._stop = len(self._raw)/self.sr
 		return self._stop
 
 	@stop.setter
@@ -786,7 +782,8 @@ class Rec(EAPeriod):
 	@property
 	def offset(self):
 		if not hasattr(self,'_offset'):
-			self._offset = open_hdf5(self.resultsfileH,self.get_groupkey('EdDetection')+'/data/t_offset')
+			with h5py.File(self.resultsfileH, 'r') as hand:
+				self._offset = hand['%s/data'%self.get_groupkey('EdDetection')].attrs('t_offset')
 		return self._offset
 
 	@property
@@ -803,10 +800,11 @@ class Rec(EAPeriod):
 	@property
 	def _artifacts(self):
 		if not hasattr(self,'_my_artifacts'):
-			try:
-				self._my_artifacts = open_hdf5(self.resultsfileH,self.get_groupkey('EdDetection')+'/data/mask_startStop_sec').T
-			except:
-				self.retrieve_artifacts_txt(self.artifactfile)
+			with h5py.File(self.resultsfileH,'r') as hand:
+				try:
+					self._my_artifacts = hand['%s/data/mask_startStop_sec'%self.get_groupkey('EdDetection')][()].T
+				except:
+					self.retrieve_artifacts_txt(self.artifactfile)
 		return self._my_artifacts
 
 	@property
@@ -836,9 +834,10 @@ class Rec(EAPeriod):
 		if not hasattr(self,'_burstdict'):
 			try:
 				burstpath = self.get_groupkey('BurstClassification')+'/data'
-				burstdata = open_hdf5(self.resultsfileH,burstpath)
-				self._burstdict = read_burstdata(burstdata['values'],burstdata['params'])
-				del burstdata
+				with h5py.File(self.resultsfileH, 'r') as hand:
+					bparams = [el.decode() for el in hand['%s/params'%burstpath][()]]
+					bvalues = hand['%s/values'%burstpath][()]
+				self._burstdict = read_burstdata(bvalues,bparams)
 				logger.info('Reading burstclasses')
 			except:
 				self._burstdict = {}
@@ -866,11 +865,16 @@ class Rec(EAPeriod):
 	@property
 	def statedict(self):
 		if not hasattr(self,'_statedict'):
+			self._statedict = {}
+
 			try:
-				self._statedict = open_hdf5(self.resultsfileH, self.get_groupkey('StateAnalysis') + '/data')
+				with h5py.File(self.resultsfileH, 'r') as hand:
+					shand = hand['%s/data'%self.get_groupkey('StateAnalysis')]
+					for skey in shand:
+						self._statedict[str(skey)] = {aname:aval for aname,aval in shand[skey].attrs.items()}
+
 				logger.info('Reading states')
 			except:
-				self._statedict = {}
 				logger.warning('Opening empty states')
 		return self._statedict
 
@@ -893,11 +897,6 @@ class Rec(EAPeriod):
 	def statedict(self,mydict):
 		self._statedict = mydict
 
-
-	@lazy_property
-	def _burstfeaturedict(self):
-
-		return open_hdf5(self.resultsfileH, self.get_groupkey('BurstDetection') + '/data')
 
 	def check_coverage(self):
 		dur_states = np.sum([state.dur for state in self.states])
@@ -1064,7 +1063,22 @@ class SOM(object):
 
 	@lazy_property
 	def _mapdict(self):
-		return open_hdf5(self.path)
+		mapdict = {}
+		with h5py.File(self.path,'r') as hand:
+			mapdict['clusterids'] = hand['clusterids'][()]
+			mapdict['seizidx'] = hand['seizidx'][()]
+			mapdict['weights'] = hand['weights'][()]
+
+			mapdict['dcolors'] = hand['dcolors'][()]
+			mapdict['kshape'] = (hand['kshape'].attrs['i0'],hand['kshape'].attrs['i1'])
+			mhand = hand['mean_std_mat']
+			mapdict['mean_std_mat'] = np.vstack([mhand['i0'][()],mhand['i1'][()]])
+			vhand = hand['som_vars']
+			mapdict['som_vars'] = {}
+			for key in vhand.keys():
+				mapdict['som_vars'][key] = np.array([aval for akey,aval in vhand[key].items()])
+
+		return mapdict
 
 	@lazy_property
 	def colors(self):

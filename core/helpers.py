@@ -331,15 +331,10 @@ def modify_elements(obj,modfn):
     else:
         return modfn(obj)
 
-def save_hdf5(filename,obj,write_maskedarr=True):
-    if write_maskedarr:
-        deepdish.io.save(filename,modify_elements(obj,ma_to_arr))
-    else:
-        deepdish.io.save(filename,obj)
-
+#todo check for maskarray and make graveyard message
 def open_hdf5(filename,group=None,read_maskedarr=True):
     logger.info('Opening %s at group %s'%(filename,group))
-    output = deepdish.io.load(filename, group)
+    output = 'temp'#deepdish.io.load(filename, group)
     if read_maskedarr:
         return modify_elements(output,arr_to_ma)
     else:
@@ -376,22 +371,25 @@ def insert_dataset_hdf5(obj, filename, dsname, grouplevel='/'):
 
 
 def merge_hdf5_special(sourcefile,targetfile,targetkey,sourcekey='data',replace_on_target=True,delete_source=True):
-    hfile = h5py.File(targetfile, 'r+')
-    hfileTemp = h5py.File(sourcefile)
-    hfileTemp.flush()
+
     writeflag = True
-    #insert delete option if already exists
-    if checkexists_hdf5(targetfile,targetkey):
-        if replace_on_target:
-            writeflag = True
-            del hfile[targetkey]
-        else:
-            writeflag = False
-            print ('WARNING: entry already exists, doing nothing!')
-    if writeflag:
-        copy_hdf5(hfileTemp.id, sourcekey, hfile.id,targetkey)
-    hfileTemp.close()
-    hfile.close()
+
+    with h5py.File(targetfile, 'r+') as hfile:
+        with h5py.File(sourcefile,'r') as hfileTemp:
+            #hfileTemp =
+            #hfileTemp.flush()
+            #insert delete option if already exists
+            if checkexists_hdf5(targetfile,targetkey):
+                if replace_on_target:
+                    writeflag = True
+                    del hfile[targetkey]
+                else:
+                    writeflag = False
+                    print ('WARNING: entry already exists, doing nothing!')
+            if writeflag:
+                copy_hdf5(hfileTemp.id, sourcekey, hfile.id,targetkey)
+    #hfileTemp.close()
+    #hfile.close()
     if delete_source:os.remove(sourcefile)
 
 def merge_hdf5(sourcefile,targetfile,overwrite_groups=True,delete_source=False):
@@ -481,6 +479,15 @@ def makelink_hdf5(sourcefile, targetfile, groupkey, overwrite=True, grouplevel='
             if not subgroup in hfile: hfile.create_group(subgroup) #make room for the new group
         hfile[groupkey] = h5py.ExternalLink(sourcefile, grouplevel)
 
+
+stringsave_h5 = lambda mygroup, dsname, strlist: mygroup.create_dataset(dsname, data= [mystr.encode("ascii", "ignore") for mystr
+                                                                             in strlist],dtype='S60')
+
+
+
+
+
+
 #CHECK WHETHER THIS ONE IS ROTTEN
 def simplesave_hdf5(obj,filename,group='/'):
     if os.path.isfile(filename):
@@ -494,35 +501,6 @@ def simplesave_hdf5(obj,filename,group='/'):
         mygroup = hfile.get(group)
     mygroup.create_dataset('/testds', data=obj)
     hfile.close()
-
-def saveto_hdf5(obj,filename,mergewithexisting=True,overwrite_groups=True,overwrite_file=False):
-
-    createnew = True
-
-    if os.path.isfile(filename):
-
-        if mergewithexisting and overwrite_file:
-            logger.warning('mergewithexisting and overwrite_file are both set to True,\
-                            automatically setting overwrite_file to False to merge')
-            overwrite_file = False
-
-        if mergewithexisting:
-
-            merge_obj_to_hdf5(obj, filename, overwrite_groups=overwrite_groups)
-            createnew=False
-
-        elif overwrite_file:
-            os.remove(filename)
-            logger.info('Deleting old %s'%(filename))
-
-        else:
-            createnew = False
-            logger.info('Will not be saved: File %s exists. Overwrite_file & mergewithexisting are both False'%(filename))
-
-    if createnew:
-        logger.info('Creating and saving to %s'%(filename))
-        save_hdf5(filename, obj, write_maskedarr=True)
-
 
 
 

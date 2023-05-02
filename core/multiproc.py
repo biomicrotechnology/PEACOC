@@ -24,7 +24,7 @@ import logging
 import time
 import os
 import h5py
-import deepdish.io as dio
+#import deepdish.io as dio
 
 from scipy.stats import scoreatpercentile
 from sklearn import mixture
@@ -131,13 +131,13 @@ class Preprocessing(edd.Analysis):
 
             #hf.saveto_hdf5(self.savedict, self.outfile, overwrite_file=True, mergewithexisting=False)
             with h5py.File(self.outfile,'w') as fdst:
-                dgr = fdest.create_group('data')
+                dgr = fdst.create_group('data')
                 #dgr.create_dataset('trace',data=self.resampled,dtype='f')
                 dgr.attrs['sr'] = self.sr
-                igr = fdest.create_group('info')
+                igr = fdst.create_group('info')
                 for key,val in self.infodict.items():
                     igr.attrs[key] = val
-                mgr = fdest.create_group('methods')
+                mgr = fdst.create_group('methods')
                 mgr.attrs['sr'] = self.sr
 
             #now running the picking and resampling
@@ -414,10 +414,8 @@ class EdDetection(edd.Analysis):
     def save_basics(self,recObj):
         logger.info('Saving basics')
         # prepare a saving structure and save some stuff right away
-        hf.saveto_hdf5({recObj.cfg_ana['Preprocessing']['groupkey']: {'path': recObj.rawfileH}}, recObj.resultsfileH,
-                       mergewithexisting=True, overwrite_groups=True, overwrite_file=False)
-        if os.path.isfile(recObj.rawfileH): hf.makelink_hdf5(recObj.rawfileH, recObj.resultsfileH,
-                                                           recObj.cfg_ana['Preprocessing']['groupkey'] + '/link')
+
+
         self.datadict = {'winarray_adj': self.winarray_adj, 'polarity': self.polarity, 't_offset': self.offset, \
                         't_total': self.pts_tot / self.sr}
         self.datadict['mask_startStop_sec'] = self.arts_fused if self.consider_artifacts else None
@@ -425,7 +423,33 @@ class EdDetection(edd.Analysis):
         artdur = np.sum(np.diff(np.clip(self.arts_fused, self.offset, self.arts_fused.max()))) if np.size(
             self.arts_fused) > 0 else 0
         self.datadict['t_analyzed'] = temp - artdur
-        self._save_resultsdict(recObj)
+
+        ds_keys = ['winarray_adj','mask_startStop_sec']
+        rmode = 'w' if not os.path.isfile(self.recObj.resultsfileH) else 'r+'
+        with h5py.File(recObj.resultsfileH, rmode) as dst:
+
+            if recObj.cfg_ana['Preprocessing']['groupkey'] in dst:
+                del dst[self.recObj.cfg_ana['Preprocessing']['groupkey']]
+            if self.groupkey in dst:
+                del dst[self.groupkey]
+            rawgroup = dst.create_group(recObj.cfg_ana['Preprocessing']['groupkey'])
+            rawgroup.attrs['path'] = recObj.rawfileH
+            grp = dst.create_group(self.groupkey)
+
+            dgrp = grp.create_group('data')
+
+            for key,vals in self.datadict.items():
+                if key in ds_keys:
+                    dgrp.create_dataset(key,data=vals,dtype='f')
+                else:
+                    dgrp.attrs[key] = vals
+
+            hf.savemake_infogroups(grp,self)
+
+        if os.path.isfile(recObj.rawfileH): hf.makelink_hdf5(recObj.rawfileH, recObj.resultsfileH,
+                                                           recObj.cfg_ana['Preprocessing']['groupkey'] + '/link')
+
+        #self._save_resultsdict(recObj)
         
     @property
     def dsdimdict(self):
@@ -584,17 +608,50 @@ class SpikeSorting(edd.Analysis):
 
         self.mask_startStop_sec = grphand['data/mask_startStop_sec'].value
 
-        for attrname,attrkey in zip(['offset','t_total','t_analyzed','polarity'],['t_offset','t_total','t_analyzed','polarity']):
-            val = dio.load(fhand.filename,'/%s/data/%s'%(groupname,attrkey))
-            setattr(self,attrname,val)
+        with h5py.File(fhand.filename,'r') as hand:
+            for attrname,attrkey in zip(['offset','t_total','t_analyzed','polarity'],['t_offset','t_total','t_analyzed','polarity']):
+                val = hand['/%s/data'%(groupname)].attrs[attrkey]
+                #val = dio.load(fhand.filename,'/%s/data/%s'%(groupname,attrkey))
+                setattr(self,attrname,val)
 
 
     def save_basics(self, recObj):
         logger.info('Saving basics')
         # prepare a saving structure and save some stuff right away
-        self.datadict = {'slicewins': self.slicewins, 'sliceseq': self.sliceseq,'polarity': self.polarity, 't_offset': self.offset, \
-                         't_total': self.t_total,'t_analyzed':self.t_analyzed,'mask_startStop_sec':self.mask_startStop_sec}
-        self._save_resultsdict(recObj)
+        self.datadict = {'slicewins': self.slicewins, 'sliceseq': self.sliceseq, 'polarity': self.polarity,
+                                      't_offset': self.offset, \
+                                      't_total': self.t_total, 't_analyzed': self.t_analyzed,
+                                      'mask_startStop_sec': self.mask_startStop_sec}
+
+        ds_keys = ['slicewins', 'sliceseq', 'mask_startStop_sec']
+
+        with h5py.File(recObj.resultsfileH, 'r+') as dst:
+            grp, dgrp, mgr = self.makeget_dsgroups(dst)
+
+            for key,vals in self.datadict.items():
+                if key in ds_keys:
+                    dgrp.create_dataset(key,data=vals,dtype='f')
+                else:
+                    dgrp.attrs[key] = vals
+
+
+
+            # filling methods
+            method_dskeys = ['cutwin', 'minsearchwin', 'nclust_list', 'ncomp_list', 'noiseclust', 'savgol_params']
+            for key in self.methodsdict.keys():
+                if not key in method_dskeys:
+                    mgr.attrs[key] = getattr(self, key)
+            for key in method_dskeys:
+                vals = getattr(self, key)
+                if type(vals) == type([1, 2]):
+                    vals = np.array(vals)
+                dtype = 'f' if key in ['cutwin', 'minsearchwin'] else 'i'
+                mgr.create_dataset(key, data=vals, dtype=dtype)
+
+
+
+
+
 
     def get_slicespikes(self, idx):
         sliceidx = self.sliceseq[idx]
@@ -1120,8 +1177,24 @@ class BurstClassification(edd.Analysis):
     def save_basics(self, recObj):
         logger.info('Saving basics')
         # prepare a saving structure and save some stuff right away
-        self.datadict = {'params':self.params}
-        self._save_resultsdict(recObj)
+        #self.datadict = {'params':self.params}
+        with h5py.File(recObj.resultsfileH, 'r+') as dst:
+            grp, dgrp, mgr = self.makeget_dsgroups(dst)
+            dgrp.create_dataset('params', data=[mystr.encode("ascii", "ignore") for mystr
+                                              in self.params], dtype='S60')
+
+        # filling methods
+        for attr in ['maxdist', 'mergelim', 'nmin', 'sompath']:
+            if hasattr(self,attr):
+                mgr.attrs[attr] = getattr(self, attr)
+
+        if hasattr(self, 'features'):
+
+            mgr.create_dataset('features', data=[mystr.encode("ascii", "ignore") for mystr
+                                                 in self.features], dtype='S60')
+        if hasattr(self, 'weights'):
+            vals = np.array(self.weights) if type(self.weights) == type([1.0]) else self.weights
+            mgr.create_dataset('weights', data=self.weights, dtype=vals)
 
     def make_empty_nest(self):
         dspath = '%s/data/%s' % (self.groupkey, 'values')

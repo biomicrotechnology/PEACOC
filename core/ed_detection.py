@@ -10,9 +10,9 @@ import matplotlib.pyplot as plt
 import time
 import subprocess
 import inspect
-import sys
 import socket,getpass
 import yaml
+import h5py
 
 from core import artisfaction,blipS,blipsort
 import core.helpers as hf
@@ -83,11 +83,6 @@ class Analysis(object):
         idict =  {'CodeRevision':githash,'Date':mydate,'Time':mytime,'CodeFile':calldir,\
                 'Class':self.id,'LogFile':logfilename,\
                 'User':getpass.getuser(),'Host':socket.gethostname()}#'Function':sys._getframe(2).f_code.co_name,
-        attrs = ['fignames','method','dependsOn']#'resultfile',
-        keys = ['ResultFigure','Method','DependsOn']#'ResultFile'
-        for attr,key in zip(attrs,keys):
-            val = getattr(self,attr) if hasattr(self,attr) else 'NA'
-            idict.update({key:val})
         return idict
         
     @property
@@ -96,17 +91,26 @@ class Analysis(object):
         return {key:getattr(self,key) for key in list(self.defaults.keys())}
 
 
-    @property
-    def savedict(self):
-        return {'data': self.datadict, 'methods': self.methodsdict, 'info': self.infodict}
-    
-    def _save_resultsdict(self,recObj):
-        '''results dict have three sub-dictionaries:
-            'data', where the actual analysis results are
-            'methods', here you find parameters
-            'info': analysis-dates, code-revisions, function calls'''
+    def makeget_dsgroups(self,hdfhand,makefill_infogrp=True):
+        if self.groupkey in hdfhand:
+            del hdfhand[self.groupkey]
+        grp = hdfhand.create_group(self.groupkey)
+        dgrp = grp.create_group('data')
+        mgr = grp.create_group('methods')
+        if makefill_infogrp: self.savemake_infogroups(grp)
+        return grp,dgrp,mgr
 
-        recObj._save_byGroup(self.savedict,self.groupkey)
+    def savemake_infogroups(self,basegroup):
+        igr = basegroup.create_group('info')
+        for key, val in self.infodict.items():
+            igr.attrs[key] = val
+
+        igr.attrs['Method'] = self.method
+
+        for attr, key in zip(['fignames', 'dependsOn'], ['ResultFigure', 'DependsOn']):
+            if hasattr(self, attr):
+                igr.create_dataset(key, data=[mystr.encode("ascii", "ignore") for mystr
+                                              in getattr(self, attr)], dtype='S60')
 
 
     def make_done_button(self,fig,xanch=0.91,yanch=0.05,width=0.07,height=0.04):
@@ -180,7 +184,7 @@ class Preprocessing(Analysis):
             #self.datadict = {'trace':self.resampled ,'sr':self.sr}
             if 'to_file' in kwargs: self.outfile = kwargs['to_file']
             else: self.outfile = str(recObj.rawfileH)
-            with h5py.File(self.outfile,'w') as fdst:
+            with h5py.File(self.outfile,'w') as fdest:
                 dgr = fdest.create_group('data')
                 dgr.create_dataset('trace',data=self.resampled,dtype='f')
                 dgr.attrs['sr'] = self.sr
@@ -589,7 +593,7 @@ class EdDetection(Analysis):
                 for dsname,obj in zip(['normfacs', 'apower'],[self.normfacs,avg_power]):
                     tempname = self.recObj.resultsfileH.replace('.h5','_Temp_%s.h5'%(dsname))
                     logger.info('... '+tempname)
-                    with hdf.File(tempname,'w') as hand:
+                    with h5py.File(tempname,'w') as hand:
                         hand.create_dataset(dsname,dataset=obj,dtype='f')
 
                     #hf.save_hdf5(tempname, obj)
@@ -1081,32 +1085,30 @@ class EdDetection(Analysis):
            #save path and link to raw data
            #todo continue here!
            rmode = 'w' if not os.path.isfile(self.recObj.resultsfileH) else 'r+'
-           attr_keys = ['t_analyzed','t_offset','t_total','zthresh']
+           attr_keys = ['t_analyzed','t_offset','t_total','zthresh','polarity']
 
            with h5py.File(self.recObj.resultsfileH,rmode) as dst:
                 if self.recObj.cfg_ana['Preprocessing']['groupkey'] in dst:
                    del dst[self.recObj.cfg_ana['Preprocessing']['groupkey']]
-                if self.groupkey in dst:
-                    del dst[groupkey]
                 rawgroup = dst.create_group(self.recObj.cfg_ana['Preprocessing']['groupkey'])
                 rawgroup.attrs['path'] = self.recObj.rawfileH
-                grp = dst.create_group(self.groupkey)
+
+                grp,dgrp,mgr = self.makeget_dsgroups(dst)
+
+                #filling data group
                 for key,vals in ddict.items():
                     if key in attr_keys:
-                        grp.attrs[key] = vals
+                        dgrp.attrs[key] = vals
                     else:
                         mytype = 'i' if key=='fOfThresh' else 'f'
-                        grp.create_dataset(key,data=vals,dtype=mytype)
+                        dgrp.create_dataset(key,data=vals,dtype=mytype)
 
-                igr = fdest.create_group('info')
-                for key, val in self.infodict.items():
-                   igr.attrs[key] = val
-
+                #filling methods group
                 method_dskeys = ['avg_lim','manthresh','norm','thr_range']
-                mgr = fdest.create_group('methods')
-                for key,vals in self.methodsdict.items():
-                    mgr.attrs[key] = vals
 
+                for key,vals in self.methodsdict.items():
+                    if not key in method_dskeys:
+                        mgr.attrs[key] = vals
 
                 mgr.create_dataset('avg_lim',np.array(self.avg_lim),dtype='f')
                 if not type(self.manthresh) == type(None):
@@ -1122,11 +1124,9 @@ class EdDetection(Analysis):
            #            overwrite_groups=True,overwrite_file=False)
            if os.path.isfile(self.recObj.rawfileH): hf.makelink_hdf5(self.recObj.rawfileH, self.recObj.resultsfileH, self.recObj.cfg_ana['Preprocessing']['groupkey']+'/link')
 
-           self.datadict = {key:val for key,val in list(ddict.items())}
+           # self.datadict = {key:val for key,val in list(ddict.items())}
 
-
-
-           self._save_resultsdict(self.recObj)
+           #self._save_resultsdict(self.recObj)
            if self.save_apower:
                if not self.retrieved_apower:
                    logger.info('copying temporary files into results file')
@@ -1134,9 +1134,10 @@ class EdDetection(Analysis):
                        dspath = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' % (dsname))
                        if os.path.isfile(dspath):
                            internal_path = '/' + self.groupkey + '/data/'+dsname
-                           hf.merge_hdf5_special(dspath,self.recObj.resultsfileH,internal_path)
+                           hf.merge_hdf5_special(dspath,self.recObj.resultsfileH,internal_path,sourcekey=dsname)
 
-           
+
+
 
 class SpikeSorting(Analysis):
     
@@ -1209,13 +1210,41 @@ class SpikeSorting(Analysis):
         if self.save_data:
             #copying data from previous analyses
             group_prev = recObj.cfg_ana['EdDetection']['groupkey']
-            self.datadict = {}
-            for key in ['t_offset','t_total','t_analyzed','mask_startStop_sec']:
-                self.datadict[key] = hf.open_hdf5(recObj.resultsfileH,'/'+group_prev+'/data/'+key)
+            #self.datadict = {}
+            #for attr in ['individual_picks','noisetimes','doublettimes']: self.datadict[attr] = getattr(self,attr)
+            #self.datadict['spikes'] = getattr(self,'truetimes')
 
-            for attr in ['polarity','individual_picks','noisetimes','doublettimes']: self.datadict[attr] = getattr(self,attr)
-            self.datadict['spikes'] = getattr(self,'truetimes')
-            self._save_resultsdict(recObj)
+
+            with h5py.File(self.recObj.resultsfileH,'r+') as dst:
+
+                grp,dgrp,mgr = self.makeget_dsgroups(dst)
+
+                #copying EdDetection data to SPike Sorting data
+                for key in ['t_offset','t_total','t_analyzed']:
+                    dgrp.attrs[key] = dst['%s/data'%group_prev].attrs[key]
+                dgrp.create_dataset('mask_startStop_sec',data=dst['%s/data/mask_startStop_sec'%group_prev][()],dtype='f')
+
+                #filling data
+                dgrp.attrs['polarity'] = self.polarity
+                for key in ['individual_picks','noisetimes','doublettimes']:
+                    vals = getattr(self,key)
+                    if np.size(vals)>0:
+                        dgrp.create_dataset(key,data=vals,dtype='f')
+                dgrp.create_dataset('spikes',data=getattr(self,'truetimes'),dtype='f')
+
+                #filling methods
+                method_dskeys = ['cutwin', 'minsearchwin', 'nclust_list', 'ncomp_list','noiseclust','savgol_params']
+                for key in self.methodsdict.keys():
+                    if not key in method_dskeys:
+                        mgr.attrs[key] = getattr(self,key)
+                for key in method_dskeys:
+                    vals = getattr(self,key)
+                    if type(vals) == type([1,2]):
+                        vals = np.array(vals)
+                    dtype = 'f' if key in ['cutwin', 'minsearchwin'] else 'i'
+                    mgr.create_dataset(key,data=vals,dtype=dtype)
+
+
 
     def run_clustering(self, recObj,**kwargs):
         
