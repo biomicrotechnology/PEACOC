@@ -40,7 +40,7 @@ analysis:
     fig_save: /FIGDIR/ANIMAL_BLOCK_ELECTRODE
 
 
-  run: [EdDetection, SpikeSorting, BurstClassification, Diagnostics]
+  run: [EdDetection, SpikeSorting, BurstClassification, Diagnostics, StateAnalysis]
 
   save_figs: True   
 

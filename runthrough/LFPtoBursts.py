@@ -91,6 +91,14 @@ else:
 
 
 ###############################################
+## State Analysis
+SA = eana.StateAnalysis()
+if checkrun(SA):
+    setparams(SA, subrun)
+    SA.run(aRec)
+
+
+###############################################
 ## Diagnostics
 # TODO mayor entries and savings
 
@@ -98,6 +106,3 @@ D = eana.Diagnostics()
 if checkrun(D):
     setparams(D,subrun)
     D.write(aRec)
-
-
-
