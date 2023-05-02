@@ -11,7 +11,6 @@ import io
 import sys
 import os
 import pickle
-import deepdish
 import h5py
 
 logger = logging.getLogger(__name__)
@@ -354,24 +353,26 @@ def append_dataset_hdf5(dshand,newdata):
 
 def insert_dataset_hdf5(obj, filename, dsname, grouplevel='/'):
     if os.path.isfile(filename):
-        hfile = h5py.File(filename, 'r+')
+        rmode = 'r+'
+        #hfile = h5py.File(filename, 'r+')
     else:
-        hfile = h5py.File(filename, 'w')
+        rmode = 'w'
+        #hfile = h5py.File(filename, 'w')
 
-    if checkexists_hdf5(filename, grouplevel):
-        mygroup = hfile.get(grouplevel)
-        print('Loading group')
-    else:
-        mygroup = hfile.create_group(grouplevel)
+    with h5py.File(filename, rmode) as hfile:
+        if checkexists_hdf5(filename, grouplevel):
+            mygroup = hfile.get(grouplevel)
+            print('Loading group')
+        else:
+            mygroup = hfile.create_group(grouplevel)
 
-    if checkexists_hdf5(filename, grouplevel + '/' + dsname):
-        print('Overwriting content at %s' % (grouplevel + '/' + dsname))
-        mygroup[dsname] = obj
-    else:
-        print('Creating dataset at %s' % (grouplevel + '/' + dsname))
-        myds = mygroup.create_dataset(dsname, data=obj)
-    hfile.flush()
-    hfile.close()
+        if checkexists_hdf5(filename, grouplevel + '/' + dsname):
+            print('Overwriting content at %s' % (grouplevel + '/' + dsname))
+            mygroup[dsname] = obj
+        else:
+            print('Creating dataset at %s' % (grouplevel + '/' + dsname))
+            myds = mygroup.create_dataset(dsname, data=obj)
+
 
 
 def merge_hdf5_special(sourcefile,targetfile,targetkey,sourcekey='data',replace_on_target=True,delete_source=True):
@@ -457,26 +458,28 @@ def makelink_hdf5(sourcefile, targetfile, groupkey, overwrite=True, grouplevel='
     2) open linked file directly:
     rawstuff = hf.open_hdf5(raw_filepath)
     '''
+    rmode = 'r+' if os.path.isfile(targetfile) else 'w'
 
-    if os.path.isfile(targetfile):
-        hfile = h5py.File(targetfile, 'r+')
-        logger.info('Updating %s' % (targetfile))
-        if groupkey in hfile.keys():
-            if overwrite:
-                del hfile[groupkey]
-                logger.info('Overwriting %s' % (groupkey))
-            else:
-                logger.info('Key %s already exisits, no overwriting' % (groupkey))
-                return 0
-    else:
-        hfile = h5py.File(targetfile, 'w')
-        logger.info('Creating %s' % (targetfile))
+    with h5py.File(targetfile,rmode) as hfile:
 
-    if groupkey.count('/') > 0:
-        subgroup = '/'.join(groupkey.split('/')[:-1])
-        if not subgroup in hfile: hfile.create_group(subgroup) #make room for the new group
-    hfile[groupkey] = h5py.ExternalLink(sourcefile, grouplevel)
-    hfile.close()
+        if os.path.isfile(targetfile):
+            #hfile = h5py.File(targetfile, 'r+')
+            logger.info('Updating %s' % (targetfile))
+            if groupkey in hfile.keys():
+                if overwrite:
+                    del hfile[groupkey]
+                    logger.info('Overwriting %s' % (groupkey))
+                else:
+                    logger.info('Key %s already exisits, no overwriting' % (groupkey))
+                    return 0
+        else:
+            #hfile = h5py.File(targetfile, 'w')
+            logger.info('Creating %s' % (targetfile))
+
+        if groupkey.count('/') > 0:
+            subgroup = '/'.join(groupkey.split('/')[:-1])
+            if not subgroup in hfile: hfile.create_group(subgroup) #make room for the new group
+        hfile[groupkey] = h5py.ExternalLink(sourcefile, grouplevel)
 
 #CHECK WHETHER THIS ONE IS ROTTEN
 def simplesave_hdf5(obj,filename,group='/'):

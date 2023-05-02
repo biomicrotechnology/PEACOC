@@ -177,10 +177,19 @@ class Preprocessing(Analysis):
     def write_result(self,recObj,**kwargs):
         
         if self.save_data:
-            self.datadict = {'trace':self.resampled ,'sr':self.sr}  
+            #self.datadict = {'trace':self.resampled ,'sr':self.sr}
             if 'to_file' in kwargs: self.outfile = kwargs['to_file']
             else: self.outfile = str(recObj.rawfileH)
-            hf.saveto_hdf5(self.savedict,self.outfile, overwrite_file=True, mergewithexisting=False)
+            with h5py.File(self.outfile,'w') as fdst:
+                dgr = fdest.create_group('data')
+                dgr.create_dataset('trace',data=self.resampled,dtype='f')
+                dgr.attrs['sr'] = self.sr
+                igr = fdest.create_group('info')
+                for key,val in self.infodict.items():
+                    igr.attrs[key] = val
+                mgr = fdest.create_group('methods')
+                mgr.attrs['sr'] = self.sr
+            #hf.saveto_hdf5(self.savedict,self.outfile, overwrite_file=True, mergewithexisting=False)
 
 
 
@@ -545,16 +554,21 @@ class EdDetection(Analysis):
 
         if exists_solid and self.retrieve_apower:
             logger.info('Loading averaged spectrogram from %s'%(apowergroup))
-            avg_power = hf.open_hdf5(self.recObj.resultsfileH,apowergroup)
-            self.normfacs = hf.open_hdf5(self.recObj.resultsfileH,normfacgroup)
+            with h5py.File(self.recObj.resultsfileH,'r') as hand:
+                avg_power = hand[apowergroup][()]
+                self.normfacs = hand[normfacgroup][()]
+            #avg_power = hf.open_hdf5(self.recObj.resultsfileH,apowergroup)
+            #self.normfacs = hf.open_hdf5(self.recObj.resultsfileH,normfacgroup)
             self.retrieved_apower = True
 
         elif exists_temp and self.retrieve_apower:
             logger.info('Reading from Temporary files')
             apower_path = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('apower'))
             normfacpath = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('normfacs'))
-            avg_power = hf.open_hdf5(apower_path)
-            self.normfacs = hf.open_hdf5(normfacpath)
+            with h5py.File(apower_path,'r') as hand: avg_power = hand['apower'][()]
+            with h5py.File(normfacpath,'r') as hand: self.normfacs = hand['normfacs'][()]
+            #avg_power = hf.open_hdf5(apower_path)
+            #self.normfacs = hf.open_hdf5(normfacpath)
 
         else:
             import gc
@@ -575,7 +589,10 @@ class EdDetection(Analysis):
                 for dsname,obj in zip(['normfacs', 'apower'],[self.normfacs,avg_power]):
                     tempname = self.recObj.resultsfileH.replace('.h5','_Temp_%s.h5'%(dsname))
                     logger.info('... '+tempname)
-                    hf.save_hdf5(tempname, obj)
+                    with hdf.File(tempname,'w') as hand:
+                        hand.create_dataset(dsname,dataset=obj,dtype='f')
+
+                    #hf.save_hdf5(tempname, obj)
             gc.collect()
             
         logger.info('Z-scoring and padding average power.')
@@ -1062,11 +1079,53 @@ class EdDetection(Analysis):
            ddict['t_analyzed'] =  temp - artdur
 
            #save path and link to raw data
-           hf.saveto_hdf5({self.recObj.cfg_ana['Preprocessing']['groupkey']: {'path':self.recObj.rawfileH}}, self.recObj.resultsfileH, mergewithexisting=True,
-                       overwrite_groups=True,overwrite_file=False)
+           #todo continue here!
+           rmode = 'w' if not os.path.isfile(self.recObj.resultsfileH) else 'r+'
+           attr_keys = ['t_analyzed','t_offset','t_total','zthresh']
+
+           with h5py.File(self.recObj.resultsfileH,rmode) as dst:
+                if self.recObj.cfg_ana['Preprocessing']['groupkey'] in dst:
+                   del dst[self.recObj.cfg_ana['Preprocessing']['groupkey']]
+                if self.groupkey in dst:
+                    del dst[groupkey]
+                rawgroup = dst.create_group(self.recObj.cfg_ana['Preprocessing']['groupkey'])
+                rawgroup.attrs['path'] = self.recObj.rawfileH
+                grp = dst.create_group(self.groupkey)
+                for key,vals in ddict.items():
+                    if key in attr_keys:
+                        grp.attrs[key] = vals
+                    else:
+                        mytype = 'i' if key=='fOfThresh' else 'f'
+                        grp.create_dataset(key,data=vals,dtype=mytype)
+
+                igr = fdest.create_group('info')
+                for key, val in self.infodict.items():
+                   igr.attrs[key] = val
+
+                method_dskeys = ['avg_lim','manthresh','norm','thr_range']
+                mgr = fdest.create_group('methods')
+                for key,vals in self.methodsdict.items():
+                    mgr.attrs[key] = vals
+
+
+                mgr.create_dataset('avg_lim',np.array(self.avg_lim),dtype='f')
+                if not type(self.manthresh) == type(None):
+                    mgr.create_dataset('manthresh',np.array(self.manthresh),dtype='f')
+                mgr.create_dataset('norm',np.array(self.norm),dtype='f')
+                mgr.create_dataset('thr_range',np.array(self.thr_range),dtype='f')
+
+
+
+
+           #hf.saveto_hdf5({self.recObj.cfg_ana['Preprocessing']['groupkey']: {'path':self.recObj.rawfileH}}, self.recObj.resultsfileH,\
+           #               mergewithexisting=True,
+           #            overwrite_groups=True,overwrite_file=False)
            if os.path.isfile(self.recObj.rawfileH): hf.makelink_hdf5(self.recObj.rawfileH, self.recObj.resultsfileH, self.recObj.cfg_ana['Preprocessing']['groupkey']+'/link')
 
-           self.datadict = {key:val for key,val in list(ddict.items())}  
+           self.datadict = {key:val for key,val in list(ddict.items())}
+
+
+
            self._save_resultsdict(self.recObj)
            if self.save_apower:
                if not self.retrieved_apower:

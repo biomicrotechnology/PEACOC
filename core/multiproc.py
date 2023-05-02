@@ -128,7 +128,17 @@ class Preprocessing(edd.Analysis):
             self.datadict = {'sr': self.sr}#here just write sampling rate, the rest comes later
             if 'to_file' in kwargs: self.outfile = kwargs['to_file']
             else: self.outfile = str(recObj.rawfileH)
-            hf.saveto_hdf5(self.savedict, self.outfile, overwrite_file=True, mergewithexisting=False)
+
+            #hf.saveto_hdf5(self.savedict, self.outfile, overwrite_file=True, mergewithexisting=False)
+            with h5py.File(self.outfile,'w') as fdst:
+                dgr = fdest.create_group('data')
+                #dgr.create_dataset('trace',data=self.resampled,dtype='f')
+                dgr.attrs['sr'] = self.sr
+                igr = fdest.create_group('info')
+                for key,val in self.infodict.items():
+                    igr.attrs[key] = val
+                mgr = fdest.create_group('methods')
+                mgr.attrs['sr'] = self.sr
 
             #now running the picking and resampling
             dspath = '/data/trace'
