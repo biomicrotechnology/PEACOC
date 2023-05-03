@@ -185,8 +185,7 @@ class EAPeriod(Period):
 
 	def set_parentObj(self,PO):
 
-		possible_attrs = ['_raw','_artifacts','_spiketimes','burststore','statestore'\
-					 ,'som','sr','_sr']
+		possible_attrs = ['_raw','_artifacts','_spiketimes','burststore','statestore','som','sr','_sr']
 		actual_attrs = [attr for attr in possible_attrs if hasattr(PO,attr)]
 		#logger.info('Actual Attrs PO: %s'%(str(actual_attrs)))
 		self.parent = PO
@@ -257,7 +256,7 @@ class EAPeriod(Period):
 	@property
 	def freetimes(self):
 		#tstart is at minimum the start of the analysis window (offset)
-		tstart = np.max([self.start,self.offset]) if hasattr(self,'offset') else np.float(self.start)
+		tstart = np.max([self.start,self.offset]) if hasattr(self,'offset') else float(self.start)
 		free_margin = this.cfg['free_margin']
 		freedist_min = this.cfg['freedist_min']
 		freeT = np.array([[],[]])
@@ -396,7 +395,7 @@ class EAPeriod(Period):
 		ydict = {}
 		for plotitem in [prop for prop in proplist if not prop=='raw']:
 			myheight = this.cfg['relative_heights'][plotitem]*fac
-			y0,y1 = np.float(cumheight),cumheight+myheight
+			y0,y1 = float(cumheight),cumheight+myheight
 			ydict[plotitem]  = [y0,y1]
 			if not plotitem=='singlets': cumheight += y1
 
@@ -534,7 +533,7 @@ class Rec(EAPeriod):
 		try:
 			self.configpath_ana = ymldict['config_files']['analysis']
 		except:
-			self.configpath_ana = self._get_default_config_path(self,basename='configAnalysis.yml')
+			self.configpath_ana = self._get_default_config_path(basename='configAnalysis.yml')
 			logger.warning('Guessing analysis config path, could not be retrieved from ymldict')
 
 		with io.open(self.configpath_ana, 'r') as ymlfile: self.cfg_ana = yaml.safe_load(ymlfile)
@@ -871,7 +870,7 @@ class Rec(EAPeriod):
 				with h5py.File(self.resultsfileH, 'r') as hand:
 					shand = hand['%s/data'%self.get_groupkey('StateAnalysis')]
 					for skey in shand:
-						self._statedict[str(skey)] = {aname:aval for aname,aval in shand[skey].attrs.items()}
+						self._statedict[str(skey)] = {aname:aval for aname,aval in shand[skey].attrs.items() if not aname.isupper()}
 
 				logger.info('Reading states')
 			except:
@@ -962,7 +961,7 @@ class State(EAPeriod):
 		if self.state == 'preUp': prox,dist = n2,n1
 		elif self.state == 'postUp':prox,dist = n1,n2
 		if dist==0: return np.inf
-		else : return prox/np.float(dist)
+		else : return prox/float(dist)
 
 
 	def set_state(self,state):
@@ -1065,24 +1064,28 @@ class SOM(object):
 	def _mapdict(self):
 		mapdict = {}
 		with h5py.File(self.path,'r') as hand:
-			mapdict['clusterids'] = hand['clusterids'][()]
-			mapdict['seizidx'] = hand['seizidx'][()]
-			mapdict['weights'] = hand['weights'][()]
-
-			mapdict['dcolors'] = hand['dcolors'][()]
+			for key in ['clusterids','seizidx','weights','dcolors']:
+				mapdict[key] = hand[key][()]
 			mapdict['kshape'] = (hand['kshape'].attrs['i0'],hand['kshape'].attrs['i1'])
 			mhand = hand['mean_std_mat']
 			mapdict['mean_std_mat'] = np.vstack([mhand['i0'][()],mhand['i1'][()]])
 			vhand = hand['som_vars']
 			mapdict['som_vars'] = {}
 			for key in vhand.keys():
-				mapdict['som_vars'][key] = np.array([aval for akey,aval in vhand[key].items()])
+				if key[:4] == 'var_':
+					vlist = []
+					for akey,aval in vhand[key].attrs.items():
+						if not akey.isupper():
+							if type(aval) == np.bytes_:
+								aval = aval.decode()
+							vlist += [aval]
+					mapdict['som_vars'][key] = vlist
 
 		return mapdict
 
 	@lazy_property
 	def colors(self):
-		return string_decoder(self._mapdict['dcolors'])
+		return np.array([val.decode() for val in self._mapdict['dcolors']])
 
 	@lazy_property
 	def nclust(self):

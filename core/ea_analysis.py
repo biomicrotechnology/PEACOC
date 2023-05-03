@@ -199,7 +199,7 @@ class BurstClassification(Analysis):
     def run(self,recObj):
 
         logclipper = lambda x: np.log10(x) if x>0. else 10.**-5
-        tranfn = lambda logTrue: logclipper if logTrue else np.float
+        tranfn = lambda logTrue: logclipper if logTrue else float
         
         logger.debug('Transferring SOM-attributes')
         self.setparam('sompath', recObj.som.path)

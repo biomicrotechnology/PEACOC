@@ -261,8 +261,8 @@ def resample_portions(data,winarray,sr,new_sr):
     ww = np.diff(winarray[0])
     logger.debug('ww: %1.2f, overlap: %1.2f '%(ww,overlap))
     nwins = winarray.shape[0]
-    firstind = np.array([0,np.float(ww-overlap*0.5)])
-    indbody = np.tile(np.array([np.float(0.5*overlap),np.float(ww-0.5*overlap)]),(nwins-2,1))
+    firstind = np.array([0,float(ww-overlap*0.5)])
+    indbody = np.tile(np.array([float(0.5*overlap),float(ww-0.5*overlap)]),(nwins-2,1))
     inds = (np.vstack([firstind,indbody])*new_sr/sr).astype(np.int) 
     fused0 = np.hstack([resampled_list[ii][start:stop] for ii,[start,stop] in enumerate(inds)])
     missing_pts = np.int(winarray[-1][1]*new_sr/sr-len(fused0))
@@ -331,10 +331,9 @@ def modify_elements(obj,modfn):
     else:
         return modfn(obj)
 
-#todo check for maskarray and make graveyard message
 def open_hdf5(filename,group=None,read_maskedarr=True):
     logger.info('Opening %s at group %s'%(filename,group))
-    output = 'temp'#deepdish.io.load(filename, group)
+    print('Fix hdf5 opening individually! - Deepdish is discontinued.')
     if read_maskedarr:
         return modify_elements(output,arr_to_ma)
     else:
@@ -487,24 +486,6 @@ stringsave_h5 = lambda mygroup, dsname, strlist: mygroup.create_dataset(dsname, 
 
 
 
-
-#CHECK WHETHER THIS ONE IS ROTTEN
-def simplesave_hdf5(obj,filename,group='/'):
-    if os.path.isfile(filename):
-        hfile = h5py.File(filename, 'r+')
-    else:
-        hfile = h5py.File(filename, 'w')
-
-    if not group in hfile:
-        mygroup = hfile.create_group(group)
-    else:
-        mygroup = hfile.get(group)
-    mygroup.create_dataset('/testds', data=obj)
-    hfile.close()
-
-
-
-
 def checkexists_hdf5(filename,group):
     if not os.path.isfile(filename):
         return False
@@ -594,7 +575,7 @@ def extract_smrViaNeo(filename,**kwargs):
     for chan in chanlist:
         subseg = seg.analogsignals[allchans.index(chan)]
         unitstr = str(subseg.units)
-        sr = np.float(subseg.sampling_rate)
+        sr = float(subseg.sampling_rate)
         trace = np.squeeze(np.array(subseg))
         moredata = {}
         if hasattr(subseg,'annotations'):moredata.update({key:value for key,value in list(subseg.annotations.items())})

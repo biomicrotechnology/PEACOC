@@ -91,17 +91,18 @@ class Analysis(object):
         return {key:getattr(self,key) for key in list(self.defaults.keys())}
 
 
-    def makeget_dsgroups(self,hdfhand,makefill_infogrp=True):
-        if self.groupkey in hdfhand:
-            del hdfhand[self.groupkey]
-        grp = hdfhand.create_group(self.groupkey)
-        dgrp = grp.create_group('data')
-        mgr = grp.create_group('methods')
+    def makeget_dsgroups(self,hdfhand,makefill_infogrp=True,kill_existing=True):
+        if kill_existing:
+            if self.groupkey in hdfhand:
+                del hdfhand[self.groupkey]
+        grp = hdfhand.create_group(self.groupkey) if not self.groupkey in hdfhand else hdfhand[self.groupkey]
+        dgrp = grp.create_group('data') if not 'data' in grp else grp['data']
+        mgr = grp.create_group('methods') if not 'methods' in grp else grp['methods']
         if makefill_infogrp: self.savemake_infogroups(grp)
         return grp,dgrp,mgr
 
     def savemake_infogroups(self,basegroup):
-        igr = basegroup.create_group('info')
+        igr = basegroup.create_group('info') if not 'info' in basegroup else basegroup['info']
         for key, val in self.infodict.items():
             igr.attrs[key] = val
 
@@ -109,8 +110,10 @@ class Analysis(object):
 
         for attr, key in zip(['fignames', 'dependsOn'], ['ResultFigure', 'DependsOn']):
             if hasattr(self, attr):
-                igr.create_dataset(key, data=[mystr.encode("ascii", "ignore") for mystr
-                                              in getattr(self, attr)], dtype='S60')
+                if key in igr:
+                    del igr[key]
+                    igr.create_dataset(key, data=[mystr.encode("ascii", "ignore") for mystr
+                                                  in getattr(self, attr)], dtype='S60')
 
 
     def make_done_button(self,fig,xanch=0.91,yanch=0.05,width=0.07,height=0.04):
@@ -559,7 +562,7 @@ class EdDetection(Analysis):
         if exists_solid and self.retrieve_apower:
             logger.info('Loading averaged spectrogram from %s'%(apowergroup))
             with h5py.File(self.recObj.resultsfileH,'r') as hand:
-                avg_power = hand[apowergroup][()]
+                avg_power = hf.arr_to_ma([apowergroup][()])
                 self.normfacs = hand[normfacgroup][()]
             #avg_power = hf.open_hdf5(self.recObj.resultsfileH,apowergroup)
             #self.normfacs = hf.open_hdf5(self.recObj.resultsfileH,normfacgroup)
@@ -569,7 +572,8 @@ class EdDetection(Analysis):
             logger.info('Reading from Temporary files')
             apower_path = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('apower'))
             normfacpath = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('normfacs'))
-            with h5py.File(apower_path,'r') as hand: avg_power = hand['apower'][()]
+            with h5py.File(apower_path,'r') as hand:
+                avg_power = hf.arr_to_ma(['apower'][()])
             with h5py.File(normfacpath,'r') as hand: self.normfacs = hand['normfacs'][()]
             #avg_power = hf.open_hdf5(apower_path)
             #self.normfacs = hf.open_hdf5(normfacpath)
@@ -594,7 +598,7 @@ class EdDetection(Analysis):
                     tempname = self.recObj.resultsfileH.replace('.h5','_Temp_%s.h5'%(dsname))
                     logger.info('... '+tempname)
                     with h5py.File(tempname,'w') as hand:
-                        hand.create_dataset(dsname,dataset=obj,dtype='f')
+                        hand.create_dataset(dsname,dataset=hf.ma_to_arr(obj),dtype='f')
 
                     #hf.save_hdf5(tempname, obj)
             gc.collect()
@@ -629,7 +633,7 @@ class EdDetection(Analysis):
                                                   mode=self.threshmode)
                 logger.info('Using mode: %s; Calculated threshold is %1.2f'%(self.threshmode,thr))
             else:
-                thr = np.float(self.manthresh)
+                thr = float(self.manthresh)
                 logger.info('Using manually set threshold: %1.2f'%(thr))
             self._zthresh = thr
             return thr
@@ -653,7 +657,7 @@ class EdDetection(Analysis):
         ampspikes = blipS.catch_undetectedBlips(self.spikes_spectral, self.data, sr=self.recObj.sr, \
                                     zthresh=self.amp_thresh, blip_margin=self.spike_margin, \
                                     dtime=self.dtime, pol=self.recObj.polarity)
-        ratio = len(ampspikes)/np.float(len(self.spikes_spectral))
+        ratio = len(ampspikes)/float(len(self.spikes_spectral))
         logger.info('N_spectral: %d, N_amplitude: %d, ratio:%1.2f.'%(len(self.spikes_spectral),\
                                                                     len(ampspikes),ratio))
         return ampspikes
@@ -843,7 +847,7 @@ class EdDetection(Analysis):
             labname = 'man%1.2f'%(thr) if self.checked_lab.count('man') else str(self.checked_lab)
             logger.info('Setting new threshold threshmode: %s, zthresh: %1.2f'%(labname,thr))
             self.setparam('threshmode',labname)
-            self.zthresh = np.float(thr)
+            self.zthresh = float(thr)
             if self.checked_lab.count('man'):self.setparam('manthresh',thr) 
             self.setparam('selected_thresh', True)
                 
@@ -1049,7 +1053,7 @@ class EdDetection(Analysis):
             if 'recObj' in kwargs:self.set_recObj(kwargs['recObj'])
             else: logger.error('Need to specify recObj as kwarg')
         
-        self.sr = np.float(self.recObj.sr)    
+        self.sr = float(self.recObj.sr)    
 
         if self.save_figs:
             fdir = os.path.join(self.recObj.figpath,self.recObj.id+'__spikeDetection')
@@ -1076,7 +1080,7 @@ class EdDetection(Analysis):
            
            ddict['mask_startStop_sec'] = self.arts_fused if self.consider_artifacts else None#np.array([[],[]])
            ddict['t_offset'] = self.offset 
-           ddict['t_total'] = self.offset + len(self.data)/np.float(self.sr)
+           ddict['t_total'] = self.offset + len(self.data)/float(self.sr)
            temp = ddict['t_total'] - self.offset
            artdur = np.sum(np.diff(np.clip(self.arts_fused,self.offset,self.arts_fused.max()))) \
                     if np.size(self.arts_fused)>0 else 0
@@ -1093,7 +1097,7 @@ class EdDetection(Analysis):
                 rawgroup = dst.create_group(self.recObj.cfg_ana['Preprocessing']['groupkey'])
                 rawgroup.attrs['path'] = self.recObj.rawfileH
 
-                grp,dgrp,mgr = self.makeget_dsgroups(dst)
+                grp,dgrp,mgr = self.makeget_dsgroups(dst,kill_existing=False)
 
                 #filling data group
                 for key,vals in ddict.items():

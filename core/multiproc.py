@@ -24,7 +24,6 @@ import logging
 import time
 import os
 import h5py
-#import deepdish.io as dio
 
 from scipy.stats import scoreatpercentile
 from sklearn import mixture
@@ -1115,7 +1114,7 @@ class BurstClassification(edd.Analysis):
 
     def init_vars(self,recObj):
         logclipper = lambda x: np.log10(x) if x > 0. else 10. ** -5
-        tranfn = lambda logTrue: logclipper if logTrue else np.float
+        tranfn = lambda logTrue: logclipper if logTrue else float
 
         logger.debug('Transferring SOM-attributes')
         self.setparam('sompath', recObj.som.path)
@@ -1244,10 +1243,10 @@ class BurstClassification(edd.Analysis):
             for bb,burst in enumerate(smallbursts):
                 for attr in ['rank','si','bmu']: setattr(burst,attr,np.nan)
             datamat =  np.vstack( [np.hstack([burst.id, burst.roi[0],burst.roi[1],burst.rank,burst.si,burst.bmu]) for burst in eam.timesort_objs(mapbursts+smallbursts)])
-            #datamat[datamat == None] = np.float(np.nan)
+            #datamat[datamat == None] = float(np.nan)
             datamat[:,0] = datamat[:,0]+self.idcounter
             self.idcounter += datamat.shape[0]
-            return datamat.astype(np.float)
+            return datamat.astype(float)
         else: return np.empty((0,len(self.params)))
 
 

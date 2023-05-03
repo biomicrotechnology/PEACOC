@@ -1,6 +1,10 @@
 import core.helpers as hf
 import numpy as np
 
+
+#todo check for maskarray and make graveyard message
+
+
 '''
 def fill_prop(propname,indict,sect):
     if 'dtype' in indict:

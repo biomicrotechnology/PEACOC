@@ -359,7 +359,7 @@ def get_bmus(roimat,weights):
 
 def get_hexgrid(kshape,hw_hex=0.5):
     
-    hw_hex1 = np.float(hw_hex)
+    hw_hex1 = float(hw_hex)
     hw_hex = 0.5
     hexratio = hw_hex1/hw_hex
     
@@ -380,7 +380,7 @@ def get_hexgrid(kshape,hw_hex=0.5):
     
 def get_conngrid(kshape,hw_hex=0.5,hw_conn=0.04):
     
-    hw_hex1 = np.float(hw_hex)
+    hw_hex1 = float(hw_hex)
     hw_hex = 0.5
     hexratio = hw_hex1/hw_hex
     dx, dy = kshape
@@ -1481,7 +1481,7 @@ def plotsummarize_somrun(datadict,mapstyle='GreysReds',seizmode='dots',**kwargs)
     fheight = 2*t_h+2*pan_h+b_h
     fwidth = l_w+nvars*pan_w+(nvars-1)*c_space+r_w
     if fwidth < fminwidth:
-        #cc_space = (fminwidth - l_w - r_w - nvars*pan_w)/np.float(nvars-1)
+        #cc_space = (fminwidth - l_w - r_w - nvars*pan_w)/float(nvars-1)
         #fwidth = l_w+nvars*pan_w+(nvars-1)*cc_space+r_w
         nnvars = np.int(np.ceil((fminwidth-l_w-r_w+c_space)/(pan_w+c_space)))#figure should be wide enough
         fwidth = l_w+nnvars*pan_w+(nnvars-1)*c_space+r_w
@@ -1493,7 +1493,7 @@ def plotsummarize_somrun(datadict,mapstyle='GreysReds',seizmode='dots',**kwargs)
     axes_list = []
     gs0 = gridspec.GridSpec(2,nnvars, hspace  =2*t_h/fheight,wspace=c_space/fwidth)
     f = figure(figsize=(fwidth,fheight),facecolor='w')
-    f.subplots_adjust(left=l_w/fwidth,right=1.-r_w/fwidth,bottom=b_h/fheight,top=1.-t_h/fheight)#-tspace/np.float(fheight)
+    f.subplots_adjust(left=l_w/fwidth,right=1.-r_w/fwidth,bottom=b_h/fheight,top=1.-t_h/fheight)#-tspace/float(fheight)
     f.text(0.98,b_h/fheight/2.,maprun +' % s QE:%1.2f | TE:%1.3f'%(str(kshape),qe,te),ha='right',va='center',fontsize=14)
     
     #component-planes
@@ -1657,7 +1657,7 @@ def plotexamples_hexhits(inputdict,sr=500.,allOnOne=False,verbose=False,forcecli
     #setup figure dimensions
     npanels = len(indsList)+len(np.where(roidurs_sorted>xdur)[0])
     if allOnOne: nrows = np.int(npanels)
-    nfigs = np.int(np.ceil(npanels/np.float(nrows)))
+    nfigs = np.int(np.ceil(npanels/float(nrows)))
     
     hex_dict =  get_hexgrid(kshape,hw_hex=hw_hex)
     xmax,ymax = np.max(hex_dict[np.prod(kshape)-1][1],axis=0)
@@ -1797,7 +1797,7 @@ def plot_clustermapTagged(inputdict,showtags=True,**kwargs):
     fwidth = l_w+pan_w+r_w
    
     f = figure(figsize=(fwidth,fheight),facecolor='w')
-    f.subplots_adjust(left=l_w/fwidth,right=1.-r_w/fwidth,bottom=b_h/fheight,top=1.-t_h/fheight)#-tspace/np.float(fheight)
+    f.subplots_adjust(left=l_w/fwidth,right=1.-r_w/fwidth,bottom=b_h/fheight,top=1.-t_h/fheight)#-tspace/float(fheight)
     ax = f.add_subplot(111)
     if ec:plot_hexPanel(kshape,clusterids,ax,hw_hex=hw_hex,showConn=False,showHexId=False\
                                  ,labelsOn=False,quality_map=dcolors,alphahex=alphahex,ec=ec)
@@ -1854,7 +1854,7 @@ def plotexample_bursts(inputdict,showtext=True,sr=500.,**kwargs):
     
     #setup figure dimensions
     npanels = len(indsList)+len(np.where(roidurs_sorted>xdur)[0])
-    nfigs = np.int(np.ceil(npanels/np.float(nrows)))
+    nfigs = np.int(np.ceil(npanels/float(nrows)))
     
     #bmus = np.array([cdict[ddict[idROI][ridx]][cidx] for idROI in ids_sorted])
     flist = []

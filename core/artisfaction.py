@@ -232,7 +232,7 @@ def plot_artifacts2(recObj,arttimes_listed,**kwargs):
     npans_large = np.int(np.sum([np.ceil(A.dur/pandur) for A in larges]))
     npans = npans_small+npans_large
     
-    nfigs = np.int(np.ceil(npans/np.float(pansPerFig)))
+    nfigs = np.int(np.ceil(npans/float(pansPerFig)))
     
     arrlist,flist = [],[]
     for ff in range(nfigs):
@@ -385,7 +385,7 @@ def plot_artifact_snips(data,artdict,sr=500.,maxtime=20,margint=[5.,5.],nrows=5)
         #print np.shape(artdict[key])
         if not np.size(artdict[key])==0 and not key=='bigSnips': 
             if type(artdict[key])==float: exec('%s = %s' % (key,artdict[key]))
-            else: exec('%s = np.array(%s)' % (key,list(artdict[key].astype(np.float))))
+            else: exec('%s = np.array(%s)' % (key,list(artdict[key].astype(float))))
     #line for debugging
     arts = artdict['arts']
     print('Shape of arts:', arts.shape)

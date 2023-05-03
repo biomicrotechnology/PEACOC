@@ -129,7 +129,7 @@ def break_state(tempstate,cpt_thresh=1.,cpt_drift=0.,depri_thresh=120.,**kwargs)
 		ttevent = mybursts[0].start-tempstate.start
 		logger.debug('ttevent %1.2f s'%(ttevent))
 	else:
-		ttevent = np.float(tempstate.dur)
+		ttevent = float(tempstate.dur)
 		logger.info('No bursts in interval')
 		if ttevent>=depri_thresh: return [ createstate('depr',tempstate.start,tempstate.stop)]
 		else: return [createstate('IIP',tempstate.start,tempstate.stop,)]
@@ -244,9 +244,9 @@ def nibble_endstates(statelist,befbuff,endbuff,output=True):
 
 	#shorten B and E according to whether they are overlapped by protected
 	firstprot = eam.filter_objs(statelist,[lambda x: x.state in B_protected])[0]
-	if firstprot.start<B.stop: B.stop = np.float(firstprot.start)
+	if firstprot.start<B.stop: B.stop = float(firstprot.start)
 	lastprot = eam.filter_objs(statelist,[lambda x: x.state in E_protected])[-1]
-	if lastprot.stop>E.start: E.start = np.float(lastprot.stop)
+	if lastprot.stop>E.start: E.start = float(lastprot.stop)
 
 
 	for P,protected,attackable,removable in zip([B,E],[B_protected,E_protected],[B_attackable,E_attackable],[B_removable,E_removable]):
@@ -257,8 +257,8 @@ def nibble_endstates(statelist,befbuff,endbuff,output=True):
 				newstates = insertPredatorStates([V],np.array(P.roi)[None,:],predator_type='void',output=True)
 				for nS in newstates:#preventing overlaps
 					if nS.state=='void':
-						 if nS.start<V.start:nS.start = np.float(V.start)
-						 if nS.stop> V.stop: nS.stop = np.float(V.stop)
+						 if nS.start<V.start:nS.start = float(V.start)
+						 if nS.stop> V.stop: nS.stop = float(V.stop)
 			elif V.state in protected:
 				newstates = [V]
 			elif V.state == 'void':

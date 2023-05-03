@@ -360,7 +360,7 @@ def prune(events,dtime,LoggerOn=False):
             train = train[train>invals[-1]]
         invalids = np.r_[invalids,invals]
     valids = np.sort([event for event in events if not event in invalids])
-    #if LoggerOn: logger.debug('N_pruned: %d, Ratio N_kept/N_pruned %1.2f'%(len(invalids),len(valids)/np.float(len(invalids))))
+    #if LoggerOn: logger.debug('N_pruned: %d, Ratio N_kept/N_pruned %1.2f'%(len(invalids),len(valids)/float(len(invalids))))
     return valids
 
 
