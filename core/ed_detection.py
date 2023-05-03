@@ -1,6 +1,7 @@
 from __future__ import division
 from __future__ import print_function
 
+import matplotlib.ticker as mticker
 import os
 import numpy as np
 import logging
@@ -133,6 +134,7 @@ class Analysis(object):
 def open_source(filename,**kwargs):
 
     fileext = os.path.splitext(filename)[-1]
+    ddict = {}
     if  fileext == '.smr':
         from core.helpers import extract_smrViaNeo
         ddict = extract_smrViaNeo(filename,**kwargs)
@@ -350,18 +352,19 @@ class ArtifactDetection(Analysis):
         self.ax.figure.canvas.draw()        
 
     def _onclick(self,event):
-        if event.ydata <0.: 
-            #print event       
-            if event.dblclick:
-                if event.button == 1:
-                    self._draw_line(event.xdata) # here you click on the plot
-                    
-                elif event.button == 2:
-                    myshortart = self._plot_shortart(event.xdata,mfac=-1.)
-                    myshortart.set_color(self.acceptcolor)
-                    self.ax.figure.canvas.draw()
-                else:
-                    pass 
+        if not type(event.ydata) == type(None):
+            if event.ydata <0.:
+                #print event
+                if event.dblclick:
+                    if event.button == 1:
+                        self._draw_line(event.xdata) # here you click on the plot
+
+                    elif event.button == 2:
+                        myshortart = self._plot_shortart(event.xdata,mfac=-1.)
+                        myshortart.set_color(self.acceptcolor)
+                        self.ax.figure.canvas.draw()
+                    else:
+                        pass
     
     def _on_key(self,event):
 
@@ -562,7 +565,7 @@ class EdDetection(Analysis):
         if exists_solid and self.retrieve_apower:
             logger.info('Loading averaged spectrogram from %s'%(apowergroup))
             with h5py.File(self.recObj.resultsfileH,'r') as hand:
-                avg_power = hf.arr_to_ma([apowergroup][()])
+                avg_power = hf.arr_to_ma(hand[apowergroup][()])
                 self.normfacs = hand[normfacgroup][()]
             #avg_power = hf.open_hdf5(self.recObj.resultsfileH,apowergroup)
             #self.normfacs = hf.open_hdf5(self.recObj.resultsfileH,normfacgroup)
@@ -573,7 +576,7 @@ class EdDetection(Analysis):
             apower_path = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('apower'))
             normfacpath = self.recObj.resultsfileH.replace('.h5', '_Temp_%s.h5' %('normfacs'))
             with h5py.File(apower_path,'r') as hand:
-                avg_power = hf.arr_to_ma(['apower'][()])
+                avg_power = hf.arr_to_ma(hand['apower'][()])
             with h5py.File(normfacpath,'r') as hand: self.normfacs = hand['normfacs'][()]
             #avg_power = hf.open_hdf5(apower_path)
             #self.normfacs = hf.open_hdf5(normfacpath)
@@ -598,7 +601,7 @@ class EdDetection(Analysis):
                     tempname = self.recObj.resultsfileH.replace('.h5','_Temp_%s.h5'%(dsname))
                     logger.info('... '+tempname)
                     with h5py.File(tempname,'w') as hand:
-                        hand.create_dataset(dsname,dataset=hf.ma_to_arr(obj),dtype='f')
+                        hand.create_dataset(dsname,data=hf.ma_to_arr(obj),dtype='f')
 
                     #hf.save_hdf5(tempname, obj)
             gc.collect()
@@ -1104,6 +1107,9 @@ class EdDetection(Analysis):
                     if key in attr_keys:
                         dgrp.attrs[key] = vals
                     else:
+                        #print('thiskey',key)
+                        if key in dgrp:
+                            del dgrp[key]
                         mytype = 'i' if key=='fOfThresh' else 'f'
                         dgrp.create_dataset(key,data=vals,dtype=mytype)
 
@@ -1113,6 +1119,11 @@ class EdDetection(Analysis):
                 for key,vals in self.methodsdict.items():
                     if not key in method_dskeys:
                         mgr.attrs[key] = vals
+
+                for key in method_dskeys:
+                    if key in mgr:
+                        del mgr[key]
+
 
                 mgr.create_dataset('avg_lim',np.array(self.avg_lim),dtype='f')
                 if not type(self.manthresh) == type(None):
@@ -1628,14 +1639,15 @@ class SpikeSorting(Analysis):
             check.on_clicked(self._checkfn)
             checkdict[cc] = {'ax':checkax,'check': check,'bool':ccbool}
             
-            ax.set_xticks([-0.2,-0.1,-0.,0.1,0.2,0.3,0.4,0.5])
-            ax.set_yticks(np.arange(-8,8,1))
+            ax.xaxis.set_major_locator(mticker.FixedLocator([-0.2,-0.1,-0.,0.1,0.2,0.3,0.4,0.5]))
+            #ax.set_yticks(np.arange(-8,8,1))
      
             ax.set_xlabel('Time [s]')            
             ax.set_ylim(y_lim)
             ax.yaxis.set_major_locator(MaxNLocator(5))
             if cc==0: ax.set_ylabel('mV')
-            else: ax.set_yticklabels([''])
+            else:ax.yaxis.set_major_locator(mticker.FixedLocator([]))
+            #ax.set_yticklabels([])
             ax.set_xlim([-self.cutwin[0],self.cutwin[1]])
         self.checklist.append(checkdict)
 

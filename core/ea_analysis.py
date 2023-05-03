@@ -313,11 +313,14 @@ class BurstClassification(Analysis):
 
             paramvals = ['key_id', 'start', 'stop'] + recObj.burstdict['params'][1:]
 
-            with h5py.File(self.recObj.resultsfileH,'r+') as dst:
+            with h5py.File(recObj.resultsfileH,'r+') as dst:
                 grp,dgrp,mgr = self.makeget_dsgroups(dst)
 
+                if key in ['values','params'] in dgrp:
+                    del dgrp[key]
+
                 #filling data
-                dgrp.create_dataset('values',data=datamat,dtype='f')
+                dgrp.create_dataset('values',data=datamat.astype(float),dtype='f')
                 dgrp.create_dataset('params', data=[mystr.encode("ascii", "ignore") for mystr
                                               in paramvals], dtype='S60')#todo take care at loading here!
 
@@ -325,11 +328,14 @@ class BurstClassification(Analysis):
                 for attr in ['maxdist','mergelim','nmin','sompath']:
                     mgr.attrs[attr] = getattr(self,attr)
 
+                if key in ['features','weights'] in mgr:
+                    del mgr[key]
+
                 mgr.create_dataset('features',data=[mystr.encode("ascii", "ignore") for mystr
                                               in self.features], dtype='S60')#todo take care at loading here!
 
-                vals = np.array(self.weights) if type(self.weights) == type([1.0]) else self.weights
-                mgr.create_dataset('weights',data=self.weights,dtype=vals)
+                vals = np.array(self.weights) if type(self.weights) == type([]) else self.weights
+                mgr.create_dataset('weights',data=self.weights,dtype='f')
 
         
         
@@ -468,7 +474,8 @@ class StateAnalysis(Analysis):
 class Diagnostics(Analysis):
     def __init__(self):
         self.method = 'Diagnostic measures for asssessing severity of epilepsy.'
-
+        for key,val in list(self.defaults.items()):
+            setattr(self,key,val)
     def write(self,recObj):
 
         self.recObj = recObj
@@ -476,11 +483,15 @@ class Diagnostics(Analysis):
         with h5py.File(self.recObj.resultsfileH, 'r+') as dst:
             grp, dgrp, mgr = self.makeget_dsgroups(dst)
 
+            for key in ['tfracs','rates']:
+                if key in dgrp:
+                    del dgrp[key]
+
             tgrp = dgrp.create_group('tfracs')
-            for category,val in self.diagn_tfracs.items():
+            for category,val in recObj.diagn_tfracs.items():
                 tgrp.attrs[category] = val
 
             rgrp = dgrp.create_group('rates')
-            for category,val in self.diagn_rates.items():
+            for category,val in recObj.diagn_rates.items():
                 rgrp.attrs[category] = val
 

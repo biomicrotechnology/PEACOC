@@ -513,7 +513,7 @@ class Rec(EAPeriod):
 		#if not os.path.isfile(self.artifactfile): logger.warning('yml-specified artifact file %s does not exist yet.'%(self.artifactfile))
 		#setting polarity
 		with h5py.File(self.resultsfileH,'r') as hand:
-			self._polarity = hand['/%s'%self.cfg_ana['EdDetection']['groupkey']].attrs['polarity'].decode()
+			self._polarity = hand['%s/data'%self.cfg_ana['EdDetection']['groupkey']].attrs['polarity']
 
 	def read_from_dict(self,ymldict):
 
@@ -730,10 +730,12 @@ class Rec(EAPeriod):
 
 	@property
 	def _raw(self):
+		#print('GETTING RAW',self._rawfileH)
 		if not hasattr(self,'_rawtrace'):
 			with h5py.File(self._rawfileH,'r') as hand:
 				try:
 					self._rawtrace = hand['/data/trace'][()]#
+					#print('done it!')
 				except:
 					self._rawtrace = hand['/data'][()]
 		return self._rawtrace
@@ -767,9 +769,9 @@ class Rec(EAPeriod):
 	@property
 	def stop(self):
 		if not hasattr(self,'_stop'):
-			with h5py.File(self.resultsfileH, 'r') as hand:
 				try:
-					self._stop = hand['%s/data'%self.get_groupkey('EdDetection')].attrs('t_total')
+					with h5py.File(self.resultsfileH, 'r') as hand:
+						self._stop = hand['%s/data'%self.get_groupkey('EdDetection')].attrs['t_total']
 				except:
 					self._stop = len(self._raw)/self.sr
 		return self._stop
@@ -782,7 +784,7 @@ class Rec(EAPeriod):
 	def offset(self):
 		if not hasattr(self,'_offset'):
 			with h5py.File(self.resultsfileH, 'r') as hand:
-				self._offset = hand['%s/data'%self.get_groupkey('EdDetection')].attrs('t_offset')
+				self._offset = hand['%s/data'%self.get_groupkey('EdDetection')].attrs['t_offset']
 		return self._offset
 
 	@property
@@ -799,9 +801,9 @@ class Rec(EAPeriod):
 	@property
 	def _artifacts(self):
 		if not hasattr(self,'_my_artifacts'):
-			with h5py.File(self.resultsfileH,'r') as hand:
 				try:
-					self._my_artifacts = hand['%s/data/mask_startStop_sec'%self.get_groupkey('EdDetection')][()].T
+					with h5py.File(self.resultsfileH, 'r') as hand:
+						self._my_artifacts = hand['%s/data/mask_startStop_sec'%self.get_groupkey('EdDetection')][()].T
 				except:
 					self.retrieve_artifacts_txt(self.artifactfile)
 		return self._my_artifacts
@@ -834,13 +836,16 @@ class Rec(EAPeriod):
 			try:
 				burstpath = self.get_groupkey('BurstClassification')+'/data'
 				with h5py.File(self.resultsfileH, 'r') as hand:
-					bparams = [el.decode() for el in hand['%s/params'%burstpath][()]]
+					try: bparams = [el.decode() for el in hand['%s/params'%burstpath][()]]
+					except: bparams = [aval.decode() for akey,aval in hand['%s/params'%burstpath].attrs.items() if not akey.isupper()]#backwards compatibility
 					bvalues = hand['%s/values'%burstpath][()]
+				#print('Im here#1')
 				self._burstdict = read_burstdata(bvalues,bparams)
 				logger.info('Reading burstclasses')
 			except:
 				self._burstdict = {}
 				logger.warning('Opening empty burstclasses')
+				print('O-O')
 		return self._burstdict
 
 	@burstdict.setter

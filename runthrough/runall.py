@@ -9,7 +9,7 @@ initpath = sys.argv[1] ##for command-line usage
 with open(initpath, 'r') as ymlfile: cfg = yaml.safe_load(ymlfile)
 
 rootdir = cfg['settings']['runfiles']
-fnames = ['rawToResampled','polarityCheck','artifactCheck','LFPtoBursts']
+fnames = ['LFPtoBursts']#'rawToResampled','polarityCheck','artifactCheck',
 filenames = [os.path.join(rootdir,fname+'.py') for fname in fnames]
 
 
