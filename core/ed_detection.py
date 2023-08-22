@@ -1127,7 +1127,7 @@ class EdDetection(Analysis):
 
                 mgr.create_dataset('avg_lim',np.array(self.avg_lim),dtype='f')
                 if not type(self.manthresh) == type(None):
-                    mgr.create_dataset('manthresh',np.array(self.manthresh),dtype='f')
+                    mgr.create_dataset('manthresh',np.array([self.manthresh]),dtype='f')
                 mgr.create_dataset('norm',np.array(self.norm),dtype='f')
                 mgr.create_dataset('thr_range',np.array(self.thr_range),dtype='f')
 
