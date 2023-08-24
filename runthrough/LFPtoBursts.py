@@ -43,7 +43,8 @@ else:
             if len(subrun[type(EDD).__name__]['take_params_from'])>0:
                 import subprocess
                 print ('Calling victimize_spikedetection.py to apply params from %s to %s'%(subrun[type(EDD).__name__]['take_params_from'],aRec.id))
-                codefile = os.path.join(cfg['settings']['code_path'],'core_extensions','victimize_spikedetection.py')
+                codefile = hf.find_files('victimize_spikedetection.py',cfg['settings']['code_path'])[0]
+                #codefile = os.path.join(cfg['settings']['code_path'],'core_extensions','victimize_spikedetection.py')
                 subprocess.call([sys.executable,codefile,aRec.init_ymlpath])
         else:
             setparams(EDD,subrun)
