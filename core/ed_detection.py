@@ -171,7 +171,7 @@ class Preprocessing(Analysis):
             return self.data_before
         else:
             logger.info('Resampling from %1.2f to %1.2f'%(self.sr_before,self.sr))
-            minpts = np.int(self.mindur_snip*self.sr_before)
+            minpts = int(self.mindur_snip*self.sr_before)
             winarray = smartwins(len(self.data_before),minpts,overfrac=self.overlap_frac)
             logger.debug('Start resampling')        
             resampled = resample_portions(self.data_before,winarray,self.sr_before,self.sr)
@@ -252,7 +252,7 @@ class Polarity(Analysis):
         from matplotlib.widgets import CheckButtons
         self.recObj=recObj
         f,ax = plt.subplots(1,1,facecolor='w')
-        mybins = np.int(np.sqrt(len(recObj._raw))/3.)
+        mybins = int(np.sqrt(len(recObj._raw))/3.)
         myhist,mybins = np.histogram(recObj._raw,mybins)
         yhist = myhist/float(len(recObj._raw))
         ymin,ymax = 10**-7,yhist.max()+10**-2
@@ -409,7 +409,7 @@ class ArtifactDetection(Analysis):
         if not hasattr(self,'arts_short'): self.get_artifacts(recObj)
         
         self.N_auto = len(self.arts_short)+len(self.arts_long[0])
-        self.artcount = np.int(self.N_auto)
+        self.artcount = int(self.N_auto)
         logger.info('N artifacts automatically detected: %d'%self.N_auto)
         
         self.y1 = scoreatpercentile(recObj.raw_data,99.95)
@@ -526,7 +526,7 @@ class EdDetection(Analysis):
     
     def get_data(self):    
         dfile = self.recObj.rawfileH
-        self.data = self.recObj.raw_data[np.int(self.offset*self.recObj.sr):]
+        self.data = self.recObj.raw_data[int(self.offset*self.recObj.sr):]
         if self.consider_artifacts: self.mask_artifacts()
         
     def mask_artifacts(self):
@@ -712,7 +712,7 @@ class EdDetection(Analysis):
         '''On doublerightclick a new threshold is created'''
         if event.dblclick and event.button == 3:
             mankeys = [key for key in list(self.threshdict.keys()) if key.count('man')] 
-            newlab = 'man1' if len(mankeys)==0 else 'man%s'%(np.max([np.int(key.split('man')[-1]) for key in mankeys])+1)
+            newlab = 'man1' if len(mankeys)==0 else 'man%s'%(np.max([int(key.split('man')[-1]) for key in mankeys])+1)
             self._append_threshdict(newlab,event.xdata)
             self.draw_newpicks()
         else:pass 
@@ -832,7 +832,7 @@ class EdDetection(Analysis):
         self.boollist= [self.threshmode==lab for lab in self.labs] #to make the default polarity checked
         self.checked_thresh = str(self.threshmode)
         height = 0.03+len(objs)*0.03
-        if np.int(matplotlib.__version__[0])>=2: self.checkax = self._threshfig.add_axes([0.84, 0.75, 0.15, height], facecolor='w')
+        if int(matplotlib.__version__[0])>=2: self.checkax = self._threshfig.add_axes([0.84, 0.75, 0.15, height], facecolor='w')
         else: self.checkax = self._threshfig.add_axes([0.84, 0.75, 0.15, height], axisbg='w')
 
         #self.checkax.set_axis_off()
@@ -931,20 +931,20 @@ class EdDetection(Analysis):
         
         #getting power and raw snippets
         ptsraw = (np.array(tbound)*sr).astype('int')
-        ptspow = ptsraw - np.int(self.offset*sr) 
+        ptspow = ptsraw - int(self.offset*sr) 
 
         rawsnip = self.recObj.raw_data[ptsraw[0]:ptsraw[1]]
         powsnip = self.avg_power[ptspow[0]:ptspow[1]]
         
         #time
-        Tpts = np.int(np.diff(tbound)*sr)
+        Tpts = int(np.diff(tbound)*sr)
         tvec = np.linspace(0,np.diff(tbound),Tpts) if start0 else np.linspace(tbound[0],tbound[1],Tpts) 
         
         Ndots = fwidth*dotsperinch #to display the avg_lim
         dotpos = np.linspace(tvec[0],tvec[-1],Ndots)
         
         #getting spectrogram
-        spraw = self.recObj.raw_data[ptsraw[0]-np.int(ww/2.):ptsraw[1]+np.int(ww/2.)-1]
+        spraw = self.recObj.raw_data[ptsraw[0]-int(ww/2.):ptsraw[1]+int(ww/2.)-1]
         sp = blipS.get_spectrogram(spraw,ww)
         highnorm,lownorm = self.normfacs ###TO DO: calcualte apower if normfacs not there, make it a property!
         sp_norm = (sp-lownorm)/(highnorm-lownorm)
@@ -1255,7 +1255,7 @@ class SpikeSorting(Analysis):
                 for key in method_dskeys:
                     vals = getattr(self,key)
                     if type(vals) == type([1,2]):
-                        vals = np.array(vals)
+                        vals = hf.flatten_mixedlists(vals) #np.array(vals)
                     dtype = 'f' if key in ['cutwin', 'minsearchwin'] else 'i'
                     mgr.create_dataset(key,data=vals,dtype=dtype)
 
@@ -1494,7 +1494,7 @@ class SpikeSorting(Analysis):
     def _preparesave_clustfig(self):
         '''removes unnecessary features from interactive cluster-figure'''
         
-        spike_from_line = lambda thisline: self.spikeobjs[np.int(thisline.get_label())]
+        spike_from_line = lambda thisline: self.spikeobjs[int(thisline.get_label())]
         #remove interactive instructions
         for mytext in self._clustpicktexts: mytext.remove()
         
@@ -1522,7 +1522,7 @@ class SpikeSorting(Analysis):
         tracetick = event.artist
         #self.tracetick = tracetick
         
-        #spikeid = np.int(tracetick.get_label())
+        #spikeid = int(tracetick.get_label())
         #logger.info('Picked spike: %d'%(spikeid))
 
         self._respond_tracepick(event.mouseevent.button,tracetick)
@@ -1549,7 +1549,7 @@ class SpikeSorting(Analysis):
 
         xpos = tracetick.get_xdata()[0]
         
-        spikeid = np.int(tracetick.get_label())
+        spikeid = int(tracetick.get_label())
 
         #delete previous marker
         mymarker = [ch for ch in self._traceax.get_children() if ch.get_label()==tracetick.get_label() and ch.get_marker() in ['^','v']]
@@ -1585,7 +1585,7 @@ class SpikeSorting(Analysis):
         col = self._get_mousecolor(mbutton)
         clustline.set_color(col)
         
-        spikeid = np.int(clustline.get_label())
+        spikeid = int(clustline.get_label())
         if col == self.pickedFPcol: self.spikeobjs[spikeid].isFP = True        
         
         
@@ -1668,7 +1668,7 @@ class SpikeSorting(Analysis):
     @property
     def individual_picks(self):
         if hasattr(self,'clustfig'):
-            handpicked = [self.spikeobjs[np.int(myline.get_label())] for ax in self.clustfig.axes for myline in ax.lines if myline.get_color()==self.pickedFPcol]
+            handpicked = [self.spikeobjs[int(myline.get_label())] for ax in self.clustfig.axes for myline in ax.lines if myline.get_color()==self.pickedFPcol]
             return np.array([sobj.time for sobj in handpicked if not sobj.in_noiseclust])
         else: return np.array([])
     
@@ -1742,7 +1742,7 @@ class Spike(object):
             startM,stopM = self.refobj.minsearchwin
             startC, stopC = self.refobj.cutwin
             if np.logical_and(self.time < (self.parent.stop - stopC), self.time > startC):
-                pstart, pstop = np.int(self.time*sr - startM*sr),np.int(self.time*sr + stopM*sr)
+                pstart, pstop = int(self.time*sr - startM*sr),int(self.time*sr + stopM*sr)
                 self._centertime = self.time - startM + np.argmin(pfac*self.parent.raw_data[pstart:pstop])/sr
             else: return np.nan
         return self._centertime
@@ -1776,7 +1776,7 @@ class Spike(object):
     def cutout(self):
         if hasattr(self,'refobj') and hasattr(self,'parent'):
             pstart,pstop = np.array(self.cutout_int)*self.parent.sr 
-            return self.parent.raw_data[np.int(pstart):np.int(pstop)]
+            return self.parent.raw_data[int(pstart):int(pstop)]
         else: return None
         
     @property

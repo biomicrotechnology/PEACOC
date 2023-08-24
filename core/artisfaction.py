@@ -24,7 +24,7 @@ def get_bigArtifacts(data,sr=500., window=1., high_thresh = 4.,low_thresh = 2.,h
     '''
     
     
-    winpts = np.int(sr*window)
+    winpts = int(sr*window)
     running_rms = lambda vec,ww: np.sqrt(np.convolve(vec**2, np.ones(ww)/float(ww), 'same'))
     
     #calcualte running root-mean-square of data
@@ -60,8 +60,8 @@ def get_bigArtifacts(data,sr=500., window=1., high_thresh = 4.,low_thresh = 2.,h
 
 def get_saturationArtifacts(data, sr=500.,mindur_stumps=0.008,mindur_teeth=0.03,maxdiff_stumps=10**-3,maxdiff_teeth=10**-2,zlim=5.,verbose=False):
 
-    stumps = get_artStumps(data,minpts=np.int(mindur_stumps*sr),maxdiff=maxdiff_stumps,zlim=zlim)
-    teeth = get_teeth(data,minpts=np.int(mindur_teeth*sr),maxdiff=maxdiff_teeth,zlim=zlim)
+    stumps = get_artStumps(data,minpts=int(mindur_stumps*sr),maxdiff=maxdiff_stumps,zlim=zlim)
+    teeth = get_teeth(data,minpts=int(mindur_teeth*sr),maxdiff=maxdiff_teeth,zlim=zlim)
     teeth = np.array([tooth for tooth in teeth if not tooth in stumps])#because some stumps also the characteristic of low diff of data
     
     if not verbose:
@@ -204,7 +204,7 @@ def plot_artifacts2(recObj,arttimes_listed,**kwargs):
     
     fheight = pansPerFig*p_h+(pansPerFig-1)*hspacing + t_h + b_h   
     
-    pify = lambda x: np.int(x*recObj.sr)
+    pify = lambda x: int(x*recObj.sr)
     getT = lambda xarray: np.linspace(0.,len(xarray)/recObj.sr,len(xarray))
     
     ybar,xbar,xext = recObj.raw_data.min()+0.2*yAmp, pandur-border_large, border_large
@@ -228,11 +228,11 @@ def plot_artifacts2(recObj,arttimes_listed,**kwargs):
     
     smallsmerge = np.hstack([recObj.raw_data[pify(A.start):pify(A.stop)] for A in smalls]) if len(smalls)>0 else np.array([])
     
-    npans_small = np.int(np.ceil(len(smalls)*2*border_small/pandur))
-    npans_large = np.int(np.sum([np.ceil(A.dur/pandur) for A in larges]))
+    npans_small = int(np.ceil(len(smalls)*2*border_small/pandur))
+    npans_large = int(np.sum([np.ceil(A.dur/pandur) for A in larges]))
     npans = npans_small+npans_large
     
-    nfigs = np.int(np.ceil(npans/float(pansPerFig)))
+    nfigs = int(np.ceil(npans/float(pansPerFig)))
     
     arrlist,flist = [],[]
     for ff in range(nfigs):
@@ -262,7 +262,7 @@ def plot_artifacts2(recObj,arttimes_listed,**kwargs):
         axcounter +=1
         pansInFig +=1
     for pp,A in enumerate(larges):
-        npansA = np.int(np.ceil(A.dur/pandur))
+        npansA = int(np.ceil(A.dur/pandur))
         for ii in range(npansA):
             if axcounter == pansPerFig: 
                 aa+=1

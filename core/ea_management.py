@@ -60,7 +60,7 @@ def prepare_burstlegend(eaperiod,loadleg=False):
 				nextrank=0
 				legdict.update({nextrank: [loaddict[clusname]['cname'], loaddict[clusname]['color'], 'bold']})
 			else:
-				nextrank = np.int(np.max(list(legdict.keys())))+1
+				nextrank = int(np.max(list(legdict.keys())))+1
 				if not legdict[nextrank-1][0] == loaddict[clusname]['cname']:
 					legdict.update({nextrank: [loaddict[clusname]['cname'], loaddict[clusname]['color'], 'bold']})
 
@@ -197,7 +197,7 @@ class EAPeriod(Period):
 
 	@property
 	def raw_data(self):
-		return self._raw[np.int(self.start*self.sr):np.int(self.stop*self.sr)]
+		return self._raw[int(self.start*self.sr):int(self.stop*self.sr)]
 
 	@property
 	def isis(self):
@@ -1004,7 +1004,7 @@ class Burst(EAPeriod):
 
 			if self.cname == 'XS':col =  this.cfg['xs_color']
 			elif self.si == 1: col = this.cfg['si1_color']
-			else: col  = self.som.colors[np.int(self.rank)]
+			else: col  = self.som.colors[int(self.rank)]
 			#if  col == 'darkgrey': col = '#001e90'
 			self._color = col
 		return self._color

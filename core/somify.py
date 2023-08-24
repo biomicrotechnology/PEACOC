@@ -366,7 +366,7 @@ def get_hexgrid(kshape,hw_hex=0.5):
     dx, dy = kshape  # x and y dimension of map
     xcents1 = np.arange(0., dx * (hw_hex) * 2, hw_hex * 2)
     xcents2 = np.r_[xcents1, xcents1 + hw_hex]
-    xcents = np.array(list(xcents2) * np.int((np.floor(dy / 2.))) + np.int(np.floor(np.mod(dy, 2))) * list(xcents1))
+    xcents = np.array(list(xcents2) * int((np.floor(dy / 2.))) + int(np.floor(np.mod(dy, 2))) * list(xcents1))
     ydiff = np.sqrt(3) * hw_hex
     ycents = np.array([[ii * ydiff] * dx for ii in range(dy)]).flatten()
     
@@ -386,7 +386,7 @@ def get_conngrid(kshape,hw_hex=0.5,hw_conn=0.04):
     dx, dy = kshape
     xcents1 = np.arange(0., dx * (hw_hex) * 2, hw_hex * 2)
     xcents2 = np.r_[xcents1, xcents1 + hw_hex]
-    xcents = np.array(list(xcents2) * np.int(np.floor(dy / 2.)) + np.int(np.floor(np.mod(dy, 2))) * list(xcents1))
+    xcents = np.array(list(xcents2) * int(np.floor(dy / 2.)) + int(np.floor(np.mod(dy, 2))) * list(xcents1))
     ydiff = np.sqrt(3) * hw_hex
     ycents = np.array([[ii * ydiff] * dx for ii in range(dy)]).flatten()
     
@@ -394,7 +394,7 @@ def get_conngrid(kshape,hw_hex=0.5,hw_conn=0.04):
     # describe connectors in terms of their centers and whether they are at the middle, left or right
     nconns = (dx - 1) * dy + (dy - 1) * ((dx - 1) * 2 + 1)
     modes_pool = ['m'] * (dx - 1) + ['l', 'r'] * (dx - 1) + ['l'] + ['m'] * (dx - 1) + ['r', 'l'] * (dx - 1) + ['r']
-    conn_modes = (modes_pool * np.int(np.ceil(nconns / float(len(modes_pool)))))[:nconns]
+    conn_modes = (modes_pool * int(np.ceil(nconns / float(len(modes_pool)))))[:nconns]
     conn_ycents = np.array([[ii * ydiff] * (3 * (dx - 1) + 1) for ii in range(dy)]).flatten()[:nconns] 
     
     row1 = np.arange(hw_hex, hw_hex * 2 * (dx - 1), 2 * hw_hex)
@@ -402,7 +402,7 @@ def get_conngrid(kshape,hw_hex=0.5,hw_conn=0.04):
     row3 = row1 + hw_hex
     row4 = np.r_[row3[0] - 2 * hw_hex, np.array([[prev] * 2 for prev in row3]).flatten()]
     rows_pool = list(np.r_[row1, row2, row3, row4])
-    conn_xcents = np.array((rows_pool * np.int(np.ceil(nconns / float(len(rows_pool)))))[:nconns])
+    conn_xcents = np.array((rows_pool * int(np.ceil(nconns / float(len(rows_pool)))))[:nconns])
     
     conn_dict = {}
     for ii in range(nconns):
@@ -899,7 +899,7 @@ def get_topologicalError(roimat,weights,kshape):
     neighdeg = 2#implicitly using a hw == 1, giving a distance of 2 for nearest neighbour
     xcents1 = np.arange(0., dx * 2,  2)
     xcents2 = np.r_[xcents1, xcents1 + 1.]
-    xcents = np.array(list(xcents2) * np.int((np.floor(dy / 2.))) + np.int(np.floor(np.mod(dy, 2))) * list(xcents1))
+    xcents = np.array(list(xcents2) * int((np.floor(dy / 2.))) + int(np.floor(np.mod(dy, 2))) * list(xcents1))
     ydiff = np.sqrt(3) 
     ycents = np.array([[ii * ydiff] * dx for ii in range(dy)]).flatten()
     coords = np.transpose(np.vstack([xcents,ycents]))
@@ -1483,9 +1483,9 @@ def plotsummarize_somrun(datadict,mapstyle='GreysReds',seizmode='dots',**kwargs)
     if fwidth < fminwidth:
         #cc_space = (fminwidth - l_w - r_w - nvars*pan_w)/float(nvars-1)
         #fwidth = l_w+nvars*pan_w+(nvars-1)*cc_space+r_w
-        nnvars = np.int(np.ceil((fminwidth-l_w-r_w+c_space)/(pan_w+c_space)))#figure should be wide enough
+        nnvars = int(np.ceil((fminwidth-l_w-r_w+c_space)/(pan_w+c_space)))#figure should be wide enough
         fwidth = l_w+nnvars*pan_w+(nnvars-1)*c_space+r_w
-    else: nnvars = np.int(nvars)
+    else: nnvars = int(nvars)
     t_diff = 0.3/fheight #for text above panels
     t_start = (t_h-0.35)/fheight #for text above panels
     
@@ -1656,8 +1656,8 @@ def plotexamples_hexhits(inputdict,sr=500.,allOnOne=False,verbose=False,forcecli
     
     #setup figure dimensions
     npanels = len(indsList)+len(np.where(roidurs_sorted>xdur)[0])
-    if allOnOne: nrows = np.int(npanels)
-    nfigs = np.int(np.ceil(npanels/float(nrows)))
+    if allOnOne: nrows = int(npanels)
+    nfigs = int(np.ceil(npanels/float(nrows)))
     
     hex_dict =  get_hexgrid(kshape,hw_hex=hw_hex)
     xmax,ymax = np.max(hex_dict[np.prod(kshape)-1][1],axis=0)
@@ -1854,7 +1854,7 @@ def plotexample_bursts(inputdict,showtext=True,sr=500.,**kwargs):
     
     #setup figure dimensions
     npanels = len(indsList)+len(np.where(roidurs_sorted>xdur)[0])
-    nfigs = np.int(np.ceil(npanels/float(nrows)))
+    nfigs = int(np.ceil(npanels/float(nrows)))
     
     #bmus = np.array([cdict[ddict[idROI][ridx]][cidx] for idROI in ids_sorted])
     flist = []

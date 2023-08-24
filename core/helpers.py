@@ -120,7 +120,7 @@ def read_burstdata(burstmat,params):
 
     cvrt = lambda val, datatype: [None] if np.isnan(val) else [val.astype(datatype)]
 
-    cdict = {np.int(vals[0]): [[vals[1], vals[2]]] + cvrt(vals[3], 'int') + cvrt(vals[4], 'float') + cvrt(vals[5],'int')\
+    cdict = {int(vals[0]): [[vals[1], vals[2]]] + cvrt(vals[3], 'int') + cvrt(vals[4], 'float') + cvrt(vals[5],'int')\
              for vals in burstmat}
     cdict.update({'params': ['roi_int'] + string_decoder(params[3:])})
     return cdict
@@ -130,8 +130,8 @@ def convert_burstdict(cdict):
     datamat = np.vstack([np.r_[key, np.array(val[0]), np.array(val[1:])] for key, val in cdict['data'].items() if
                          not key == 'params'])
     datamat[datamat == None] = np.nan
-    # newdatadict = {np.int(datavec[0]):[datavec[1:3],np.array([np.int(datavec[3]),datavec[4],np.int(datavec[5])])] for datavec in datamat}
-    # newdatadict = {str(np.int(datavec[0])):np.r_[datavec[1:3],np.array([np.int(datavec[3]),datavec[4],np.int(datavec[5])])] for datavec in datamat}
+    # newdatadict = {int(datavec[0]):[datavec[1:3],np.array([int(datavec[3]),datavec[4],int(datavec[5])])] for datavec in datamat}
+    # newdatadict = {str(int(datavec[0])):np.r_[datavec[1:3],np.array([int(datavec[3]),datavec[4],int(datavec[5])])] for datavec in datamat}
 
     # newdatadict['params'] = cdict['data']['params']
     paramvals = ['key_id', 'start', 'stop'] + cdict['data']['params'][1:]
@@ -197,8 +197,8 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
     from scipy.special import factorial
 
     try:
-        window_size = np.abs(np.int(window_size))
-        order = np.abs(np.int(order))
+        window_size = np.abs(int(window_size))
+        order = np.abs(int(order))
     except ValueError as msg:
         raise ValueError("window_size and order have to be of type int")
     if window_size % 2 != 1 or window_size < 1:
@@ -221,17 +221,17 @@ def savitzky_golay(y, window_size, order, deriv=0, rate=1):
 #------------------------------------------------------------------------------ 
 #resampling
 def smartwins(datalen,winpts,overfrac=1/6.,pow2=True):
-    ww = 2**winpts.bit_length() if pow2 else np.int(winpts)
-    overest = np.int(ww*overfrac)
-    overlap = overest+1 if np.mod(overest,2) else np.int(overest)#make the overlap divisible by 2    
+    ww = 2**winpts.bit_length() if pow2 else int(winpts)
+    overest = int(ww*overfrac)
+    overlap = overest+1 if np.mod(overest,2) else int(overest)#make the overlap divisible by 2    
     nwins = (datalen-ww)//(ww-overlap)+1
     winstarts = np.arange(0,nwins*ww,ww)
     winstarts = winstarts[:] if overfrac == 0 else winstarts-np.arange(0.,overlap*nwins,overlap)
     winarray = np.vstack([winstarts,winstarts+ww])
     lastdiff = datalen-winarray[1][-1]
-    last_ww = 2*ww if lastdiff>(ww-overfrac) else np.int(ww)    
+    last_ww = 2*ww if lastdiff>(ww-overfrac) else int(ww)    
     lastwin = np.array([datalen-last_ww,datalen])
-    winarray = np.hstack([winarray,lastwin[:,None]]).astype(np.int)
+    winarray = np.hstack([winarray,lastwin[:,None]]).astype(int)
     if (winarray[0][-1]-winarray[1][-2])>0:logger.error('last window doesnt overlap')
     return winarray.T
 
@@ -251,7 +251,7 @@ def resample_portions(data,winarray,sr,new_sr):
         #print start,stop
         snip = data[start:stop]
         sniplen = stop-start
-        resampled = resample(snip,np.int(sniplen/rate_ratio))
+        resampled = resample(snip,int(sniplen/rate_ratio))
         resampled_list.append(np.squeeze(resampled))
         #tlist.append(np.linspace(start/sr,stop/sr,len(resampled)))
     
@@ -263,9 +263,9 @@ def resample_portions(data,winarray,sr,new_sr):
     nwins = winarray.shape[0]
     firstind = np.array([0,float(ww-overlap*0.5)])
     indbody = np.tile(np.array([float(0.5*overlap),float(ww-0.5*overlap)]),(nwins-2,1))
-    inds = (np.vstack([firstind,indbody])*new_sr/sr).astype(np.int) 
+    inds = (np.vstack([firstind,indbody])*new_sr/sr).astype(int) 
     fused0 = np.hstack([resampled_list[ii][start:stop] for ii,[start,stop] in enumerate(inds)])
-    missing_pts = np.int(winarray[-1][1]*new_sr/sr-len(fused0))
+    missing_pts = int(winarray[-1][1]*new_sr/sr-len(fused0))
     fused = np.r_[fused0,resampled_list[-1][-missing_pts:]]
     
     #check whether durations match
@@ -292,7 +292,7 @@ def checkplot_resampling(raw,resampled,sr,new_sr,**kwargs):
     if 'winarray' in kwargs:
         winarray = kwargs['winarray']
         nwins = winarray.shape[0]
-        yrunner = np.tile(np.array([0,0.4]),np.int(np.ceil(nwins/2.)))[:nwins]+1
+        yrunner = np.tile(np.array([0,0.4]),int(np.ceil(nwins/2.)))[:nwins]+1
         ax.hlines(yrunner,winarray[:,0]/sr,winarray[:,1]/sr,color='b',alpha=0.5,linewidth=2)
     ax.set_ylabel('Amplitude')
     ax.set_xlabel('Time [s]')
@@ -331,13 +331,18 @@ def modify_elements(obj,modfn):
     else:
         return modfn(obj)
 
-def open_hdf5(filename,group=None,read_maskedarr=True):
-    logger.info('Opening %s at group %s'%(filename,group))
-    print('Fix hdf5 opening individually! - Deepdish is discontinued.')
-    if read_maskedarr:
-        return modify_elements(output,arr_to_ma)
-    else:
-        return output
+
+def flatten_mixedlists(mylist):
+    if not type(mylist) == type([2,3]):
+        return mylist
+    newlist = []
+    for sublist in mylist:
+        if type(sublist) == type([2,3]):
+            for item in sublist:
+                newlist += [item]
+        else:
+            newlist += [sublist]
+    return np.unique(newlist)
 
 def append_dataset_hdf5(dshand,newdata):
     Newshape = dshand.shape[0]+newdata.shape[0]

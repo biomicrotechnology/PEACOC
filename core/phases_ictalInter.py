@@ -438,7 +438,7 @@ def plot_classifiedTrace(recObj,pandur=43.*60.,fwidth=13.,showitems=['singlets',
 	lr_marg = kwargs['lr_marg'] if 'lr_marg' in kwargs else 0.6
 	legOn = kwargs['legendOn'] if 'legendOn' in kwargs else False
 
-	npans = np.int(np.ceil((recObj.dur-recObj.offset)/pandur))
+	npans = int(np.ceil((recObj.dur-recObj.offset)/pandur))
 	fheight = npans*p_h+(npans-1)*hspacing + t_h + b_h
 
 	f, axarr = subplots(npans,1, figsize=(fwidth,fheight),facecolor='w')

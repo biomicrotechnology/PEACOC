@@ -44,9 +44,9 @@ def resample_save(F,hdataset,chidx,snipstart,snipstop,sr_old,sr_new):
     snip = F.readSignal(chidx, snipstart, ww)
     snip2 = hf.checkadapt_mv(hf.checkadapt_zeromean(snip))
     # print (len(snip),snip.min(),snip.max())
-    resampled = resample(snip2,np.int(ww/rate_ratio))
+    resampled = resample(snip2,int(ww/rate_ratio))
     # print (len(resampled), resampled.min(),resampled.max())
-    ptstart,ptstop = np.int(snipstart/rate_ratio),np.int(snipstop/rate_ratio)
+    ptstart,ptstop = int(snipstart/rate_ratio),int(snipstop/rate_ratio)
     hdataset[ptstart:ptstop] = resampled
 
 
@@ -118,10 +118,10 @@ class Preprocessing(edd.Analysis):
             else: F,chidx = retrieve_channidx_edf(self.sourcefile, chanlist=[self.chanid])
 
             self.sr_before = F.samplefrequency(chidx)
-            minpts = np.int(self.mindur_snip * self.sr_before)
+            minpts = int(self.mindur_snip * self.sr_before)
             datalen = F.getNSamples()[chidx]
             rate_ratio = self.sr_before / self.sr
-            newlen = np.int(datalen / rate_ratio)
+            newlen = int(datalen / rate_ratio)
             winarray = hf.smartwins(datalen, minpts, overfrac=0., pow2=True)
 
             self.datadict = {'sr': self.sr}#here just write sampling rate, the rest comes later
@@ -172,10 +172,10 @@ class EdDetection(edd.Analysis):
 
         # used to prepare efficient spike sorting, not strictly needed for spike detection"""
         try:
-            self.bunchpts = np.int(mpobj.SpikeSorting['bunch_int']*self.sr)
+            self.bunchpts = int(mpobj.SpikeSorting['bunch_int']*self.sr)
 
         except:
-            self.bunchpts = np.int(self.pts_tot)
+            self.bunchpts = int(self.pts_tot)
             logger.warning('Not accessing bunchpoints!')
 
     @property
@@ -232,11 +232,11 @@ class EdDetection(edd.Analysis):
         self.rawhand = grp['trace']
         self.sr = grp.attrs['sr']
         self.pts_tot = self.rawhand.size
-        #datadur = np.int(self.pts_tot/ self.sr)
+        #datadur = int(self.pts_tot/ self.sr)
 
     @property
     def apowlen_tot(self):
-        return self.pts_tot-self.window+1-np.int(self.offset*self.sr)
+        return self.pts_tot-self.window+1-int(self.offset*self.sr)
 
     @property
     def overhang_pts(self):
@@ -246,7 +246,7 @@ class EdDetection(edd.Analysis):
     def artpoints(self):
         if not hasattr(self,'_artpoints'):
             self.get_artsfused()
-            self._artpoints = (self.arts_fused*self.sr).astype(np.int)
+            self._artpoints = (self.arts_fused*self.sr).astype(int)
         return self._artpoints
 
     @property
@@ -257,8 +257,8 @@ class EdDetection(edd.Analysis):
     @property
     def winarray(self):
         if not hasattr(self,'_winarray'):
-            self.durpts = np.int(self.dicedur*self.sr)
-            offpts = np.int(self.offset*self.sr)
+            self.durpts = int(self.dicedur*self.sr)
+            offpts = int(self.offset*self.sr)
             winarray = hf.smartwins(self.pts_tot - offpts, self.durpts, overfrac=0., pow2=False)
             winarray += offpts
             # overlap to maximize spectrum
@@ -344,7 +344,7 @@ class EdDetection(edd.Analysis):
         return times + offsetter
 
     def setmake_barray(self):
-        self.N_bunchpts = np.int(np.ceil(self.pts_tot / self.bunchpts))
+        self.N_bunchpts = int(np.ceil(self.pts_tot / self.bunchpts))
         self.barray = np.arange(self.N_bunchpts) * self.bunchpts
         self.barray[-1] = self.pts_tot #the last bunch is the overlap longer
 
@@ -352,7 +352,7 @@ class EdDetection(edd.Analysis):
         ptmin, ptmax = np.array([idx * self.durpts, (idx + 1) * self.durpts])
         tsavail = self.barray[(self.barray >= ptmin) & (self.barray < ptmax)] / self.sr
         #print ("tsavail",tsavail)
-        spikeinds = np.array([np.argmin(np.abs(tavail - spikes)) for tavail in tsavail]).astype(np.int)
+        spikeinds = np.array([np.argmin(np.abs(tavail - spikes)) for tavail in tsavail]).astype(int)
         return spikeinds
 
 
@@ -517,7 +517,7 @@ class EdDetection(edd.Analysis):
                 apowhand[in0:in1] = apowdata
             elif type(apowdata) == np.ma.core.MaskedArray:
                 apowhand[0, in0:in1] = apowdata.data
-                apowhand[1, in0:in1] = apowdata.mask.astype(np.int)
+                apowhand[1, in0:in1] = apowdata.mask.astype(int)
             else:
                 apowhand[0, in0:in1] = apowdata
 
@@ -559,7 +559,7 @@ def get_indexarray(sniplen):
     for ii in np.arange(1,npows+1):
         newrow = get_newrow(currrow,maxlen,ii)
         currrow = np.r_[currrow,newrow]
-    introw = currrow.astype(np.int)
+    introw = currrow.astype(int)
     seen = set()
     outarray = np.array([x for x in introw if not (x in seen or seen.add(x))])
     assert len(outarray) == (maxlen+1),'len mismatch %i vs %i'%(len(outarray),maxlen+1)
@@ -600,7 +600,7 @@ class SpikeSorting(edd.Analysis):
         self.fhand = fhand
         grphand = fhand['/%s' % (groupname)]
         slicers = grphand['data/spikeslicers'][:]
-        self.slicewins = np.vstack([slicers[:-1], slicers[1:]]).T.astype(np.int)
+        self.slicewins = np.vstack([slicers[:-1], slicers[1:]]).T.astype(int)
         self.n_slicewins = len(self.slicewins)
         self.sliceseq = get_indexarray(self.n_slicewins)
         self.srcspikehand = grphand['data/spikes']
@@ -724,18 +724,18 @@ class SpikeSorting(edd.Analysis):
         self.rawhand = grp['trace']
         self.sr = grp.attrs['sr']
         self.pts_tot = self.rawhand.size
-        #datadur = np.int(self.pts_tot/ self.sr)
+        #datadur = int(self.pts_tot/ self.sr)
 
     @property
     def ptssearch(self):
         if not hasattr(self, '_ptssearch'):
-            self._ptssearch = (np.array(self.minsearchwin) * self.sr).astype(np.int)
+            self._ptssearch = (np.array(self.minsearchwin) * self.sr).astype(int)
         return self._ptssearch
     
     @property
     def ptscut(self):
         if not hasattr(self, '_ptscut'):
-            self._ptscut = (np.array(self.cutwin) * self.sr).astype(np.int)
+            self._ptscut = (np.array(self.cutwin) * self.sr).astype(int)
         return self._ptscut
 
     @property
@@ -754,7 +754,7 @@ class SpikeSorting(edd.Analysis):
     def get_cutout(self,spike,polfac=1):
 
         """for positive polarity, signfac=-1, for negative use signfac= +1"""
-        spikept = np.int(spike * self.sr)
+        spikept = int(spike * self.sr)
         tempcut = self.rawhand[spikept-self.bigwin[0]:spikept+self.bigwin[1]]*polfac
         searchwin = tempcut[self.subsearchwin[0]:self.subsearchwin[1]]#here the minimum is searched
         abspt = np.argmin(searchwin)+self.subsearchwin[0] #point in tempcut where minimum is
@@ -767,12 +767,12 @@ class SpikeSorting(edd.Analysis):
     def polpts(self):
         """points around spike around which polarity gets assessed when having mixed polarity"""
         if not hasattr(self,'_polpts'):
-            self._polpts = np.int(0.02*self.sr)
+            self._polpts = int(0.02*self.sr)
         return self._polpts
 
     def get_cutout_polfac(self,spike):
         """used for mixed polarity spikes"""
-        spikept = np.int(spike * self.sr)
+        spikept = int(spike * self.sr)
         tempcut = self.rawhand[spikept-self.bigwin[0]:spikept+self.bigwin[1]]
         polfac = self.get_polfac_snip(tempcut[self.bigwin[0]-self.polpts:self.bigwin[0]+self.polpts])
         tempcut = tempcut*polfac
@@ -943,7 +943,7 @@ class SpikeSorting(edd.Analysis):
 
         # cumspikes = np.cumsum(np.diff(sepslicer).flatten())
 
-        burstslicer = np.array([[], []]).T.astype(np.int)
+        burstslicer = np.array([[], []]).T.astype(int)
         cumcount = 0
         fixedstart = sepslicer[0, 0]
         for ii in np.arange(sepslicer.shape[0]):
@@ -954,7 +954,7 @@ class SpikeSorting(edd.Analysis):
             if cumcount >= self.minspikes_block:
                 burstslicer = np.vstack([burstslicer, np.array([fixedstart, pstop])])
                 cumcount = 0
-                fixedstart = np.int(pstop)
+                fixedstart = int(pstop)
         burstslicer[-1, 1] = len(sortedspikes)
         dspath = '%s/data/%s' % (self.groupkey, 'burstslicer')
         if dspath in self.fhand:
@@ -1146,7 +1146,7 @@ class BurstClassification(edd.Analysis):
     @property
     def freefused(self):
         if not hasattr(self,'_freefused'):
-            freepts = (self.recObj.freetimes * self.recObj.sr).astype(np.int)
+            freepts = (self.recObj.freetimes * self.recObj.sr).astype(int)
             self._freefused = np.hstack([self.recObj.raw_data[start:stop] for start, stop in freepts])
         return self._freefused
 
@@ -1201,7 +1201,7 @@ class BurstClassification(edd.Analysis):
             logger.warning('Overwriting dataset %s in %s' % (dspath, self.fhand.filename))
             del self.fhand[dspath]
         nparams = len(self.params)
-        self.datahand = self.fhand.create_dataset(dspath, data=np.empty((0,nparams)), maxshape=(np.int(self.spikehand.size/2),nparams))
+        self.datahand = self.fhand.create_dataset(dspath, data=np.empty((0,nparams)), maxshape=(int(self.spikehand.size/2),nparams))
 
     def classify_bursts_in_block(self,idx,aRec):
         #get spikes
@@ -1235,7 +1235,7 @@ class BurstClassification(edd.Analysis):
             roimat = roimat * weightfacs
             #project on SOM
             bmus = somify.get_bmus(roimat, aRec.som.weights)
-            clusts = aRec.som.clusterids[bmus].astype(np.int)
+            clusts = aRec.som.clusterids[bmus].astype(int)
             sinds = aRec.som.seizidx[bmus]
             for bb, burst in enumerate(mapbursts):
                 for attr, val in zip(['rank', 'si', 'bmu'], [clusts[bb], sinds[bb], bmus[bb]]): setattr(burst, attr, val)

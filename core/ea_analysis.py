@@ -42,7 +42,7 @@ class BurstDetection(Analysis):
     @property
     def freefused(self):
         if not hasattr(self,'_freefused'):
-            freepts = (self.recObj.freetimes * self.recObj.sr).astype(np.int)
+            freepts = (self.recObj.freetimes * self.recObj.sr).astype(int)
             self._freefused = np.hstack([self.recObj.raw_data[start:stop] for start, stop in freepts])
         return self._freefused
 
@@ -163,7 +163,7 @@ class BurstClassification(Analysis):
         nbursts = len(burstObjs)
 
         logger.debug('Selecting bursts to get the greatest variety in SeizureIndex')
-        adders = np.unique([np.int((nbursts-1)//(2**ii)) for ii in range(20)])[::-1][:-1]
+        adders = np.unique([int((nbursts-1)//(2**ii)) for ii in range(20)])[::-1][:-1]
         order_pool = np.array([0])
         for adder in adders:
             order_pool = np.r_[order_pool,order_pool+adder]
@@ -259,7 +259,7 @@ class BurstClassification(Analysis):
         bmus = somify.get_bmus(roimat,recObj.som.weights)
         
         logger.info('Setting rank and si attributes.')
-        clusts = recObj.som.clusterids[bmus].astype(np.int)
+        clusts = recObj.som.clusterids[bmus].astype(int)
         sinds = recObj.som.seizidx[bmus]
         for bb,burst in enumerate(mapbursts):    
             for attr,val in zip(['rank','si','bmu'],[clusts[bb],sinds[bb],bmus[bb]]):             

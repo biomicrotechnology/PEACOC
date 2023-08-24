@@ -148,9 +148,9 @@ def remove_doubleDetected(bliptimes,datatrace,maxDist=0.15,blipWin=[0.05,0.2],sr
     
 def get_waveformSnippets(btimes,data,sr=500.,minwin=[0.15,0.1],blipint = [0.1,0.15]):
     btimes = np.array([btime for btime in btimes if np.logical_and(btime<len(data)/sr-blipint[1],btime>blipint[0])])
-    mintimes = np.array([blip/sr-minwin[0]+np.argmin(data[np.int(blip-minwin[0]*sr):np.int(blip+minwin[1]*sr)])/sr for blip in btimes*sr])
+    mintimes = np.array([blip/sr-minwin[0]+np.argmin(data[int(blip-minwin[0]*sr):int(blip+minwin[1]*sr)])/sr for blip in btimes*sr])
     snipdict = {snipid: data[int(blip)-int(blipint[0]*sr):int(blip)+int(blipint[1]*sr)] for snipid,blip in enumerate(mintimes*sr)}
-    snippts = np.int(np.sum(blipint)*sr)
+    snippts = int(np.sum(blipint)*sr)
     '''print 'snipdictlen',len(snipdict)
     for key in snipdict.keys():
         print key,snipdict[key].shape'''
@@ -233,7 +233,7 @@ def cluster(comps,nclust=3,flavour='gmm'):
         n_dim = comps.shape[0]
         centers = np.random.rand(nclust, n_dim)
         centers_new = np.random.rand(nclust, n_dim)
-        partition = np.zeros(comps.shape[1], dtype=np.int)
+        partition = np.zeros(comps.shape[1], dtype=int)
         while not (centers_new == centers).all():
             centers = centers_new.copy()
             distances = (centers[:,np.newaxis,:] - comps.T)
@@ -508,7 +508,7 @@ def removeFPs_byPCA(bliptimes,data,sr=500.,sgParams=[21,2],ncomps=3,nclust=4,min
             dirtysparse = mysparse[clinds == np.max(clinds)]
 
         else:#cluster pos and neg trace separately
-            mysparse_pos = np.array([blip for blip in mysparse if polarity(data[np.int((blip-cr)*sr):np.int((blip+cr)*sr)])==1.])
+            mysparse_pos = np.array([blip for blip in mysparse if polarity(data[int((blip-cr)*sr):int((blip+cr)*sr)])==1.])
             mysparse_neg = np.array([blip for blip in mysparse if not blip in mysparse_pos])
             
             clinds_pos = sortBlips(mysparse_pos,data*-1,sr=sr,ncomps=ncomps,nclust=nclust,minsearchwin = minsearchwin,cutwin = cutwin)
@@ -953,7 +953,7 @@ def removeFPs_byPCA_DEPRECATED(bliptimes,data,sr=500.,sgParams=[21,2],ncomps=3,n
             mysparse_pos = np.array([blip for blip in mysparse if polarity(data[(blip-cr)*sr:(blip+cr)*sr])==1.])
             mysparse_neg = np.array([blip for blip in mysparse if not blip in mysparse_pos])
             
-            if type(ncomps)== np.int: 
+            if type(ncomps)== int: 
                 if counter==0: print('mix - same components & clusters',ncomps,nclust)
                 clinds_pos = sortBlips(mysparse_pos,data*-1,sr=sr,ncomps=ncomps,nclust=nclust,minsearchwin = minsearchwin,cutwin = cutwin)
                 clinds_neg = sortBlips(mysparse_neg,data,sr=sr,ncomps=ncomps,nclust=nclust,minsearchwin = minsearchwin,cutwin = cutwin)

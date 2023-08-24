@@ -438,7 +438,7 @@ def getZthresh_derivMethod(fobtrace,threshtrace,peakperc=35.,verbose = False,max
         #where is the longest thresh of being above the peakperc level ...
         stab_pt = (cross_starts[cross_dur==np.max(cross_dur)][0],cross_ends[cross_dur==np.max(cross_dur)][0])#indices where derivative is low
         box_ylim = np.min(fob[stab_pt[0]:stab_pt[1]]),np.max(fob[stab_pt[0]:stab_pt[1]])#for plotting only
-        ptidx = np.int(stab_pt[0]+np.ceil((stab_pt[1]-stab_pt[0])/2))
+        ptidx = int(stab_pt[0]+np.ceil((stab_pt[1]-stab_pt[0])/2))
         x_thresh = thresh_vec[ptidx]
         y_thresh = fob[ptidx]
     elif mode == 'firstcross':
@@ -570,7 +570,7 @@ def catch_undetectedBlips(bliptimes,rawdata,sr=500.,zthresh = 4.5,blip_margin = 
             mockblips = []
             for ablip,pblip in zip(bliptimes2,prec_blips):
                 #cond1: polarities between predecessor and amplitude blip must be identical if they are close enough together(maxdiff)
-                cond1 = polarity(rawdata[np.int((ablip-cr)*sr):np.int((ablip+cr)*sr)]) == polarity(rawdata[np.int((pblip-cr)*sr):np.int((pblip+cr)*sr)])
+                cond1 = polarity(rawdata[int((ablip-cr)*sr):int((ablip+cr)*sr)]) == polarity(rawdata[int((pblip-cr)*sr):int((pblip+cr)*sr)])
                 cond2 = (ablip-pblip)>= maxdiff
                 if not cond1 and not cond2: mockblips.append(ablip)
             bliptimes2 = np.array([blip for blip in bliptimes2 if not blip in mockblips])
@@ -597,7 +597,7 @@ def catch_undetectedBlips(bliptimes,rawdata,sr=500.,zthresh = 4.5,blip_margin = 
             #and original bliptimes+newly found bliptimes
             frees = get_frees(bltimes,blip_margin,rawdata,sr=sr)
             freefused =  zscore(np.hstack(frees))
-            mybins = np.int(np.sqrt(len(freefused))/3.)
+            mybins = int(np.sqrt(len(freefused))/3.)
             myhist,mybins = np.histogram(freefused,mybins)
             yhist = myhist/float(len(freefused))
             hist_list.append(yhist)
@@ -784,7 +784,7 @@ def plot_blipsDetectedExamples(bt_spectral,bt_amp,data,snipdur=20.,sr=500., **kw
     tvec = np.linspace(t_offset,len(data)/sr+t_offset,len(data))
     
     starts = kwargs['starts'] if 'starts' in kwargs \
-            else sorted(np.random.choice(tvec[:np.int(-sr*snipdur)],size=n_panels))
+            else sorted(np.random.choice(tvec[:int(-sr*snipdur)],size=n_panels))
 
     ampcol,speccol = 'r','b'
     
