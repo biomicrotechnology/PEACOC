@@ -1,0 +1,262 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Output &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script async="async" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/latest.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Accessing results" href="access_results.html" />
+    <link rel="prev" title="EA detection and classification" href="LFP_to_bursts.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="access_results.html" title="Accessing results"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="LFP_to_bursts.html" title="EA detection and classification"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Output</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Output</a><ul>
+<li><a class="reference internal" href="#results-hdf5">Results (HDF5)</a></li>
+<li><a class="reference internal" href="#quality-control-figures">Quality control figures</a><ul>
+<li><a class="reference internal" href="#spike-detection">Spike detection</a></li>
+<li><a class="reference internal" href="#spike-sorting">Spike sorting</a></li>
+<li><a class="reference internal" href="#burst-classification">Burst classification</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="LFP_to_bursts.html"
+                        title="previous chapter">EA detection and classification</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="access_results.html"
+                        title="next chapter">Accessing results</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/output.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="output">
+<span id="id1"></span><h1>Output<a class="headerlink" href="#output" title="Permalink to this headline">¶</a></h1>
+<p>During this analysis run the following folders and files were generated:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my_results
+├── data
+│ └── my_recording
+│     ├── my_recording__analysis.log
+│     ├── my_recording__artifacts.txt
+│     ├── my_recording__blipSpy.h5
+│     ├── my_recording__polarity.txt
+│     └── my_recording__raw500.h5
+└── figures
+    └── my_recording
+        ├── my_recording__burstClassification
+        │   ├── my_recording__examplesOnMap_thisSOM.png
+        │   ├── my_recording__mapIds_to_ROIids.txt
+        │   └── my_recording__traceClassified_thisSOM.png
+        ├── my_recording__spikeDetection
+        │   ├── my_recording__ampDetection.png
+        │   ├── my_recording__detExamples.png
+        │   └── my_recording__FofThresh.png
+        └── my_recording__spikesorting
+            ├── my_recording__clusterremoval_ncomp3.png
+            ├── my_recording__fpRemoval_ex1.png
+            ├── my_recording__fpRemoval_ex2.png
+            └── my_recording__fpRemoval_ex3.png
+</pre></div>
+</div>
+<p>The exact location of the figure and data files depend on the location you entered when <a class="reference internal" href="setting_parameters.html#replacement-params"><span class="std std-ref">editing the parameter files</span></a>
+(specifically how you replaced <cite>DATADIR</cite> and <cite>FIGDIR</cite> in the template).</p>
+<div class="section" id="results-hdf5">
+<span id="resultshdf5"></span><h2>Results (HDF5)<a class="headerlink" href="#results-hdf5" title="Permalink to this headline">¶</a></h2>
+<p>The folder <em>my_results/data/my_recording</em> contains the results of the analyses, most importantly <em>my_recording__blipSpy.h5</em>.
+In this file all important results and intermediate steps (like the normalized averaged spectrogram) are stored.
+<em>my_recording__blipSpy.h5</em> looks like this:</p>
+<a class="reference internal image-reference" href="_images/hdf5Output.png"><img alt="_images/hdf5Output.png" class="align-center" src="_images/hdf5Output.png" style="width: 500px;" /></a>
+<p>This file contains the timings and classes of bursts (field <em>burstcalsses</em>), the train of spikes after spikesorting (<em>dischargedict_cleaned</em>),
+the train of spikes before spikesorting (i.e. the spikes resulting from spectral and amplitude based spike detection, <em>dischargedict_raw</em>)
+and a link to the raw_data contained in <em>my_recording__raw500.h5</em> (field <em>raw_data/link</em>). Most of these fields contain three subfields
+- <em>data</em>, where the actual results are stored
+- <em>info</em>, where you find metadata (e.g. the version of the code used and the paths to the figures generated by these analyses)
+- <em>methods</em>, giving the parameters used for a particular analysis step</p>
+<p>You can either directly extract the data from these hdf5 files yourself (have a look at <a class="reference internal" href="access_results.html#direct-hdf5access"><span class="std std-ref">this</span></a> for inspiration),
+or use the <a class="reference internal" href="access_results.html#access-results"><span class="std std-ref">data handling tool</span></a> we provide to conveniently access and visualize results.</p>
+</div>
+<div class="section" id="quality-control-figures">
+<span id="quality-control"></span><h2>Quality control figures<a class="headerlink" href="#quality-control-figures" title="Permalink to this headline">¶</a></h2>
+<p>To assess whether the algorithm performed sensibly, figures were created and saved in the folder <em>my_results/data/my_recording</em>.
+You can turn this off in the parameter file (<cite>analysis:save_figs: False</cite>) …</p>
+<a class="reference internal image-reference" href="_images/params_savefigs.png"><img alt="_images/params_savefigs.png" class="align-center" src="_images/params_savefigs.png" style="width: 350px;" /></a>
+<p>… but I highly recommend you keep saving these figures and routinely check them to see whether everything works well.
+In the following you will learn how to interpret these figures.</p>
+<div class="section" id="spike-detection">
+<h3>Spike detection<a class="headerlink" href="#spike-detection" title="Permalink to this headline">¶</a></h3>
+<p>The folder <strong>my_recording__spikeDetection</strong> contains three figure files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my_recording__spikeDetection
+ ├── my_recording__ampDetection.png
+ ├── my_recording__detExamples.png
+ └── my_recording__FofThresh.png
+</pre></div>
+</div>
+<p>The figure <em>my_recording__FofThresh.png</em> displays the number of spikes as a function of threshold (<span class="math notranslate nohighlight">\(n(\theta)\)</span>, see also <a class="reference internal" href="LFP_to_bursts.html#spikes-spectral"><span class="std std-ref">spectral spike detection</span></a>).
+The circle indicates the threshold selected. As we manually picked the threshold in this example, the <cite>mode</cite> is <cite>man</cite>.
+The green line displays the derivative of <span class="math notranslate nohighlight">\(n(\theta)\)</span> based on which the plateau region was determined:</p>
+<a class="reference internal image-reference" href="_images/my_recording__FofThresh.png"><img alt="_images/my_recording__FofThresh.png" class="align-center" src="_images/my_recording__FofThresh.png" style="width: 500px;" /></a>
+<p>For a proper spike detection we need a plateau region (<em>paper_Figure XXX_</em>), that is a region where <span class="math notranslate nohighlight">\(n(\theta)\)</span> increases only very slowly.
+Non-epileptic mice lack such a pleateau. Here we are content, because a plateau is clearly visible and the threshold is located
+nicely within the plateau region.</p>
+<p>The figure <em>my_recording__ampDetection.png</em> displays the amplitude distribution of the LFP with spectral spikes masked (black) and
+spectral + amplitude spikes masked (green, <em>paper_Figure XXX_</em>). The red line indicates the value where
+the amplitude threshold was automatically set (-4.5 due to negative <a class="reference internal" href="preprocessing.html#polarity"><span class="std std-ref">polarity</span></a>) and the red numbers in the upper right
+corner state again the threshold, the absolute number of amplitude spikes #(amp-EDs), and how the number of spikes increased
+through amplitude based spike detection:</p>
+<a class="reference internal image-reference" href="_images/my_recording__ampDetection.png"><img alt="_images/my_recording__ampDetection.png" class="align-center" src="_images/my_recording__ampDetection.png" style="width: 350px;" /></a>
+<p>In this case the shoulder for negative values is very small (note the logarithmic y-axis) and consequently very few spikes
+were detected as amplitude spikes (0.9% increase only).</p>
+<p>The figure <em>my_recording__detExamples.png</em> shows five randomly selected 40s snippets of LFP with spectal and amplitude spikes
+annotated by blue and red ticks respectively. Regions <a class="reference internal" href="preprocessing.html#artifacts"><span class="std std-ref">annotated as artifacts</span></a> are shaded in yellow.</p>
+<a class="reference internal image-reference" href="_images/my_recording__detExamples.png"><img alt="_images/my_recording__detExamples.png" class="align-center" src="_images/my_recording__detExamples.png" style="width: 700px;" /></a>
+<p>Because there were so few amplitude spikes (i.e. spectral spike detection did a good job), we dont see any red ticks here.
+But we notice some false positives, eg. in the first and second row. Luckily these were probably removed by
+<a class="reference internal" href="LFP_to_bursts.html#spikesorting"><span class="std std-ref">spike sorting</span></a>.</p>
+</div>
+<div class="section" id="spike-sorting">
+<h3>Spike sorting<a class="headerlink" href="#spike-sorting" title="Permalink to this headline">¶</a></h3>
+<p>The folder <strong>my_recording__spikesorting</strong> contains one file again displaying the spike clusters and three figures
+of LFP traces annoted with putative false positives detected through spike sorting:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my_recording__spikesorting
+   ├── my_recording__clusterremoval_ncomp3.png
+   ├── my_recording__fpRemoval_ex1.png
+   ├── my_recording__fpRemoval_ex2.png
+   └── my_recording__fpRemoval_ex3.png
+</pre></div>
+</div>
+<p>The figure <em>my_recording__clusterremoval_ncomp3.png</em> (ncomp3 refers to the default of three principal components used for sorting)
+have already seen when running <a class="reference internal" href="LFP_to_bursts.html#spikesorting"><span class="std std-ref">spike sorting in interactive mode</span></a>:</p>
+<a class="reference internal image-reference" href="_images/my_recording__clusterremoval_ncomp3.png"><img alt="_images/my_recording__clusterremoval_ncomp3.png" class="align-center" src="_images/my_recording__clusterremoval_ncomp3.png" style="width: 700px;" /></a>
+<p>If you ran everything automatically (by default only cluster 5 is removed) you would get suspicious and now run the
+sorting again to remove cluster 4 as well.
+But as indicated by the <cite>checkmarks</cite>, we already removed cluster 4 as well and are very content, because clusters
+1-3 show nice spike-like waveforms, while clusters 4 and 5 do not look like spikes.</p>
+<p>The figures <em>my_recording__fpRemoval_ex1-3.png</em> show five randomly selected 20s snippets of LFP with non-removed (<em>accepted EDs</em>, blue)
+and false positives detected through spike sorting (red) indicated by tickmarks. The grey regions indicates the waveform
+cutouts subjected to spike sorting.
+Regions <a class="reference internal" href="preprocessing.html#artifacts"><span class="std std-ref">annotated as artifacts</span></a> are shaded in yellow.
+Here is one of these example figures:</p>
+<a class="reference internal image-reference" href="_images/my_recording__fpRemoval_ex3.png"><img alt="_images/my_recording__fpRemoval_ex3.png" class="align-center" src="_images/my_recording__fpRemoval_ex3.png" style="width: 700px;" /></a>
+<p>Note that spikes occuring in groups were not subjected to spike sorting (last row). Overall, we are very happy
+with the performance, most false positives appear to have been detected. If you noticed an awful lot of false positives
+in these example figures, you might need to <a class="reference internal" href="LFP_to_bursts.html#spikes-spectral"><span class="std std-ref">change the threshold for spectral spike detection</span></a>
+or <a class="reference internal" href="LFP_to_bursts.html#spikesorting"><span class="std std-ref">exclude more/different clusters</span></a>. Likewise, if you observed too many false negatives or spikes being wrong-
+fully labeled false positives here.</p>
+</div>
+<div class="section" id="burst-classification">
+<h3>Burst classification<a class="headerlink" href="#burst-classification" title="Permalink to this headline">¶</a></h3>
+<p>The folder <strong>my_recording__burstClassification</strong> contains two figures related to burst classification:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>my_recording__burstClassification
+   ├── my_recording__examplesOnMap_thisSOM.png
+   ├── my_recording__mapIds_to_ROIids.txt
+   └── my_recording__traceClassified_thisSOM.png
+</pre></div>
+</div>
+<p>The figure <em>my_recording__examplesOnMap_thisSOM.png</em> displays the SOM (left) and how spikes bursts (randomly chosen)
+were assigned to nodes of the SOM (right). The colors indicate the different burst classes. Note that the high-load
+cluster is sub-differentiated here in <cite>high-load 1</cite> (red) and <cite>high-load 2</cite> (orange).:</p>
+<a class="reference internal image-reference" href="_images/my_recording__examplesOnMap_thisSOM.png"><img alt="_images/my_recording__examplesOnMap_thisSOM.png" class="align-center" src="_images/my_recording__examplesOnMap_thisSOM.png" style="width: 700px;" /></a>
+<p>The file <em>my_recording__mapIds_to_ROIids.txt</em> translates the burst ids given in this figure to the actual burst ids in the
+data (in case you want to hunt down a particular burst). Everything looks nice, bursts appear to be assigned properly
+and according to our intuition of severity. Pay special heed to this figure when applying our algorithm to a different
+mouse model. If things look strange here, you <a class="reference internal" href="LFP_to_bursts.html#burst-classification"><span class="std std-ref">may need to use different kinds of features and/or build your
+own SOM</span></a>.</p>
+<p>The figure <em>my_recording__traceClassified_thisSOM.png</em> shows the whole trace of the LFP with the burst classes (colors) and
+solitary spikes (black tickmarks) displayed on top. The purpose of this figure is to give you an overview of the sequence of
+classified EA events. Note that here the EA is classified in t-shirt sizes to allow for a more detailed classification.
+The category <cite>low-load</cite> in the <em>paper_</em> comprises all <cite>XS</cite> (bursts with fewer than five spikes which were not classified
+on the SOM) and <cite>S</cite> (low-load bursts classified through the SOM) bursts shown here. The <cite>medium-load</cite> bursts are category
+<cite>M</cite> and the category <cite>high-load</cite> comprises all <cite>L</cite> (=`high-load2`) and <cite>XL</cite> (=`high-load1`) bursts:</p>
+<a class="reference internal image-reference" href="_images/my_recording__traceClassified_thisSOM.png"><img alt="_images/my_recording__traceClassified_thisSOM.png" class="align-center" src="_images/my_recording__traceClassified_thisSOM.png" style="width: 750px;" /></a>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="access_results.html" title="Accessing results"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="LFP_to_bursts.html" title="EA detection and classification"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Output</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

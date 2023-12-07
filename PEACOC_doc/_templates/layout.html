@@ -1,0 +1,14 @@
+{% extends "!layout.html" %}
+
+
+{% block rootrellink %}
+        <li><a href="{{ pathto('index') }}">home</a>|&nbsp;</li>
+        <li><a href="{{ pathto('search') }}">search</a>|&nbsp;</li>
+{% endblock %}
+
+
+{% block relbar1 %}</p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>{{ super() }} {% endblock %} {# put the sidebar before the body #} {% block sidebar1 %}{{ sidebar() }}{% endblock %} {% block sidebar2 %}{% endblock %}</p>

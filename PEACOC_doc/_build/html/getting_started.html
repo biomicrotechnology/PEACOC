@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Getting started &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Setting parameters" href="setting_parameters.html" />
+    <link rel="prev" title="Detecting epileptiform activity with PEACOC" href="index.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="setting_parameters.html" title="Setting parameters"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Detecting epileptiform activity with PEACOC"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Getting started</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Getting started</a><ul>
+<li><a class="reference internal" href="#download-the-toolbox">Download the toolbox</a><ul>
+<li><a class="reference internal" href="#using-git">Using git</a><ul>
+<li><a class="reference internal" href="#updating-to-a-newer-version">Updating to a newer version</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#alternative-download-archive">Alternative: download archive</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#set-up-a-virtual-environment-recommended">Set up a virtual environment (recommended)</a></li>
+<li><a class="reference internal" href="#install-requirements">Install requirements</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="index.html"
+                        title="previous chapter">Detecting epileptiform activity with PEACOC</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="setting_parameters.html"
+                        title="next chapter">Setting parameters</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/getting_started.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="getting-started">
+<span id="id1"></span><h1>Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="download-the-toolbox">
+<span id="download"></span><h2>Download the toolbox<a class="headerlink" href="#download-the-toolbox" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="using-git">
+<span id="download-git"></span><h3>Using git<a class="headerlink" href="#using-git" title="Permalink to this headline">¶</a></h3>
+<p>Navigate to where you want to store the toolbox. For example:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">PEACOC_tutorial</span><span class="o">/</span>
+</pre></div>
+</div>
+<p>Then clone the repository from git using the command-line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">biomicrotechnology</span><span class="o">/</span><span class="n">PEACOC</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>The output on the command-line should look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Cloning</span> <span class="n">into</span> <span class="s1">&#39;PEACOC&#39;</span><span class="o">...</span>
+<span class="n">remote</span><span class="p">:</span> <span class="n">Enumerating</span> <span class="n">objects</span><span class="p">:</span> <span class="mi">75</span><span class="p">,</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">remote</span><span class="p">:</span> <span class="n">Counting</span> <span class="n">objects</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">75</span><span class="o">/</span><span class="mi">75</span><span class="p">),</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">remote</span><span class="p">:</span> <span class="n">Compressing</span> <span class="n">objects</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">55</span><span class="o">/</span><span class="mi">55</span><span class="p">),</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">remote</span><span class="p">:</span> <span class="n">Total</span> <span class="mi">75</span> <span class="p">(</span><span class="n">delta</span> <span class="mi">21</span><span class="p">),</span> <span class="n">reused</span> <span class="mi">72</span> <span class="p">(</span><span class="n">delta</span> <span class="mi">18</span><span class="p">),</span> <span class="n">pack</span><span class="o">-</span><span class="n">reused</span> <span class="mi">0</span>
+<span class="n">Receiving</span> <span class="n">objects</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">75</span><span class="o">/</span><span class="mi">75</span><span class="p">),</span> <span class="mf">296.27</span> <span class="n">KiB</span> <span class="o">|</span> <span class="mf">2.77</span> <span class="n">MiB</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="n">done</span><span class="o">.</span>
+<span class="n">Resolving</span> <span class="n">deltas</span><span class="p">:</span> <span class="mi">100</span><span class="o">%</span> <span class="p">(</span><span class="mi">21</span><span class="o">/</span><span class="mi">21</span><span class="p">),</span> <span class="n">done</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Now you have a sub-folder called <em>PEACOC</em> in the directory where you executed git clone.
+<em>PEACOC</em> contains all the code.</p>
+<div class="section" id="updating-to-a-newer-version">
+<span id="update-git"></span><h4>Updating to a newer version<a class="headerlink" href="#updating-to-a-newer-version" title="Permalink to this headline">¶</a></h4>
+<p>You can later update the toolbox to its newest version using git.
+Navigate to the toolbox directory:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">PEACOC</span>
+</pre></div>
+</div>
+<p>And then update to the newest version of the code:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">git</span> <span class="n">pull</span>
+</pre></div>
+</div>
+<p>But for now, let’s stay one level above the folder <em>PEACOC</em>.</p>
+</div>
+</div>
+<div class="section" id="alternative-download-archive">
+<span id="download-zip"></span><h3>Alternative: download archive<a class="headerlink" href="#alternative-download-archive" title="Permalink to this headline">¶</a></h3>
+<p>If you do not want to use git, you can also download the <a class="reference external" href="https://github.com/biomicrotechnology/PEACOC/archive/master.zip">zip archive</a> from github.
+Extract this to a place where you want to store the toolbox.</p>
+</div>
+</div>
+<div class="section" id="set-up-a-virtual-environment-recommended">
+<span id="virtual-env"></span><h2>Set up a virtual environment (recommended)<a class="headerlink" href="#set-up-a-virtual-environment-recommended" title="Permalink to this headline">¶</a></h2>
+<p>I strongly recommened installing all requirements for <em>PEACOC</em> in a new virtual environment and always run the program from there.
+This keeps all dependencies nice and tidy and prevents that stuff does not work anymore due to an annoying update.
+Here is how to set up a virtual environment.
+To use virtual environments, use this command on Linux:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenvwrapper</span>
+</pre></div>
+</div>
+<p>Or this on for a Windows machine:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip</span> <span class="n">install</span> <span class="n">virtualenvwrapper</span><span class="o">-</span><span class="n">win</span>
+</pre></div>
+</div>
+<p>Then create a virtual environment and let’s name it <em>peacoc</em>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">mkvirtualenv</span> <span class="o">--</span><span class="n">python</span><span class="o">=</span><span class="n">python3</span> <span class="n">peacoc</span>
+</pre></div>
+</div>
+<p>To enter this environment, type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">workon</span> <span class="n">peacoc</span>
+</pre></div>
+</div>
+<p>You can leave this environment by typing:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">deactivate</span>
+</pre></div>
+</div>
+<p>But for now, let’s stay in <em>peacoc</em>.</p>
+</div>
+<div class="section" id="install-requirements">
+<span id="requirements"></span><h2>Install requirements<a class="headerlink" href="#install-requirements" title="Permalink to this headline">¶</a></h2>
+<p>If you do not have python 3 (code also works with python version &gt;=2.5) and pip 3 on your computer.
+You can find instructions about how to install these two at <a class="reference external" href="https://realpython.com/installing-python/">python</a> and <a class="reference external" href="https://pip.pypa.io/en/stable/">pip</a>.</p>
+<p>If you decided to use a virtual environment for EA detection, make sure you are in it:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">workon</span> <span class="n">peacoc</span>
+</pre></div>
+</div>
+<p>Install the requirements:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip3</span> <span class="n">install</span> <span class="o">-</span><span class="n">r</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">requirements</span><span class="o">.</span><span class="n">txt</span>
+</pre></div>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="setting_parameters.html" title="Setting parameters"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="index.html" title="Detecting epileptiform activity with PEACOC"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Getting started</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

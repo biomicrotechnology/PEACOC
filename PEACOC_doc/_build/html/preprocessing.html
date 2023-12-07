@@ -1,0 +1,235 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Preprocessing &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="EA detection and classification" href="LFP_to_bursts.html" />
+    <link rel="prev" title="Setting parameters" href="setting_parameters.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="LFP_to_bursts.html" title="EA detection and classification"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="setting_parameters.html" title="Setting parameters"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Preprocessing</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Preprocessing</a><ul>
+<li><a class="reference internal" href="#load-and-resample">Load and resample</a><ul>
+<li><a class="reference internal" href="#automatic-mode">Automatic mode</a></li>
+<li><a class="reference internal" href="#alternative-interactive-mode">Alternative: Interactive mode</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#assign-polarity">Assign polarity</a></li>
+<li><a class="reference internal" href="#detect-artifacts">Detect artifacts</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="setting_parameters.html"
+                        title="previous chapter">Setting parameters</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="LFP_to_bursts.html"
+                        title="next chapter">EA detection and classification</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/preprocessing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="preprocessing">
+<span id="id1"></span><h1>Preprocessing<a class="headerlink" href="#preprocessing" title="Permalink to this headline">¶</a></h1>
+<p>Both preprocessing and <a class="reference internal" href="LFP_to_bursts.html#lfp-to-bursts"><span class="std std-ref">EA detection and classification</span></a> work as a command line tool. The basic command structure is like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">codefile</span><span class="o">.</span><span class="n">py</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">paramfile</span><span class="o">.</span><span class="n">yml</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<div class="section" id="load-and-resample">
+<span id="resample"></span><h2>Load and resample<a class="headerlink" href="#load-and-resample" title="Permalink to this headline">¶</a></h2>
+<p>The goal of this is to transfer obtain a resampled version of the raw data in hdf5 format. To date the loading supports
+.smr and .edf files.</p>
+<p>Just run:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">runthrough</span><span class="o">/</span><span class="n">rawToResampled</span><span class="o">.</span><span class="n">py</span> <span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>My command line when resampling looks like this (the “(peacoc)” indicates that I work in the virtual enviroment “peacoc” ):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">peacoc</span><span class="p">)</span> <span class="n">weltgeischt</span><span class="nd">@heulsuse</span><span class="p">:</span><span class="o">~/</span><span class="n">PEACOC_tutorial</span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">runthrough</span><span class="o">/</span><span class="n">rawToResampled</span><span class="o">.</span><span class="n">py</span> <span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Depending on what you put in your specific parameter file, loading and resampling either just run through <a class="reference internal" href="#auto-load"><span class="std std-ref">automatically</span></a>, which is nice when processing
+several recordings in a loop, or you can select the channel <a class="reference internal" href="#interactive-load"><span class="std std-ref">interactively</span></a>.</p>
+<div class="section" id="automatic-mode">
+<span id="auto-load"></span><h3>Automatic mode<a class="headerlink" href="#automatic-mode" title="Permalink to this headline">¶</a></h3>
+<p>For this you need to know the channel you want to access and enter it directly in the parameter file:</p>
+<a class="reference internal image-reference" href="_images/resample_channel_params.png"><img alt="_images/resample_channel_params.png" class="align-center" src="_images/resample_channel_params.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="alternative-interactive-mode">
+<span id="interactive-load"></span><h3>Alternative: Interactive mode<a class="headerlink" href="#alternative-interactive-mode" title="Permalink to this headline">¶</a></h3>
+<p>In case you do not know the channel name and want to select a channel interactively, <em>channel</em> should be set to <em>interactive</em>
+in the specific parameter file:</p>
+<a class="reference internal image-reference" href="_images/resample_interactive_params.png"><img alt="_images/resample_interactive_params.png" class="align-center" src="_images/resample_interactive_params.png" style="width: 500px;" /></a>
+<p>In interactive mode you then type the name of the channel you want to select and exit with <code class="docutils literal notranslate"><span class="pre">d</span></code>:</p>
+<a class="reference internal image-reference" href="_images/resample_interactive.png"><img alt="_images/resample_interactive.png" class="align-center" src="_images/resample_interactive.png" style="width: 350px;" /></a>
+<p>You now have created a resampled .hdf5 at <em>/my_results/data/my_recording/</em> and a log-file of the analysis (which is nice for handing
+in, in case your analysis is not working properly):</p>
+<a class="reference internal image-reference" href="_images/resampled_file_and_log_created.png"><img alt="_images/resampled_file_and_log_created.png" class="align-center" src="_images/resampled_file_and_log_created.png" style="width: 500px;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>You can skip this loading and resampling routine and use your own resampled hdf5 file. Take care, however, to
+adhere to the format given in <em>PEACOC_tutorial/my_results/data/my_recording/my_recording__raw500.h5</em></p>
+</div>
+</div>
+</div>
+<div class="section" id="assign-polarity">
+<span id="polarity"></span><h2>Assign polarity<a class="headerlink" href="#assign-polarity" title="Permalink to this headline">¶</a></h2>
+<p>Polarity refers to the direction of the spike component in EA. To interactively determine and set the polarity of your
+recording, run the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">runthrough</span><span class="o">/</span><span class="n">polarityCheck</span><span class="o">.</span><span class="n">py</span> <span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Two windows will pop up: A LFP trace of the whole recording…</p>
+<a class="reference internal image-reference" href="_images/polarity_trace.png"><img alt="_images/polarity_trace.png" class="align-center" src="_images/polarity_trace.png" style="width: 500px;" /></a>
+<p>… and an amplitude distribution, with checkboxes:</p>
+<a class="reference internal image-reference" href="_images/polarity_click.png"><img alt="_images/polarity_click.png" class="align-center" src="_images/polarity_click.png" style="width: 500px;" /></a>
+<p>In this example you can see a shoulder at negative amplitudes, this strongly suggests, that the polarity of this
+example recording is negative. To be sure you could also zoom around in the LFP trace that just popped up. As you can see,
+the polarity indeed appears to be negative (the spike component goes down).</p>
+<a class="reference internal image-reference" href="_images/polarity_traceZoom.png"><img alt="_images/polarity_traceZoom.png" class="align-center" src="_images/polarity_traceZoom.png" style="width: 500px;" /></a>
+<p>By marking a checkbox in the upper right corner of the window with the amplitude distribution,
+you select a polarity. Clicking <code class="docutils literal notranslate"><span class="pre">Done</span></code> (bottom right) ends the whole procedure, and a simple .txt file is created
+at <em>PEACOC_tutorial/my_results/data/my_recording/my_recording__polarity.txt</em>:</p>
+<a class="reference internal image-reference" href="_images/polarity_file.png"><img alt="_images/polarity_file.png" class="align-center" src="_images/polarity_file.png" style="width: 300px;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you know the polarity of your recordings anyway, you can yourself create a file <em>my_recording__polarity.txt</em> and
+do not need to follow the interactive routine to determine the polarity.  If the file <em>my_recording__polarity.txt</em> is not present,
+later analyses will assume default polarity (negative).</p>
+</div>
+</div>
+<div class="section" id="detect-artifacts">
+<span id="artifacts"></span><h2>Detect artifacts<a class="headerlink" href="#detect-artifacts" title="Permalink to this headline">¶</a></h2>
+<p>To run the semi-automatic artifact detection, execute this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">runthrough</span><span class="o">/</span><span class="n">artifactCheck</span><span class="o">.</span><span class="n">py</span> <span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>A window displaying the whole extent of the recording session will pop up. In it single events the algorithm detected
+as potential <em>saturation artifacts</em> are marked by <code class="docutils literal notranslate"><span class="pre">red</span> <span class="pre">dots</span></code> and potential <em>longer stretches of artifacts</em> are marked by <code class="docutils literal notranslate"><span class="pre">purple</span> <span class="pre">lines</span></code>:</p>
+<a class="reference internal image-reference" href="_images/arts_trace.png"><img alt="_images/arts_trace.png" class="align-center" src="_images/arts_trace.png" style="width: 700px;" /></a>
+<p><strong>Accepting suggested artifacts:</strong> Zoom around to have a look whether you want to accept any of the proposed artifacts. Accepting an artifact means that this
+stretch of data (plus a margin for the <em>saturation artifact</em>) will be masked for further analyses. To accept an artifact,
+<code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">left</span> <span class="pre">click</span></code> on its marker. Once you accepted the artifact its marker will turn <code class="docutils literal notranslate"><span class="pre">yellow</span></code>.</p>
+<p><strong>Rejecting suggested artifacts:</strong> <code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">right</span> <span class="pre">click</span></code> to reject a suggested artifact. Once rejected, the marker of the artifact will turn <code class="docutils literal notranslate"><span class="pre">blue</span></code>:</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Only artifacts marked in yellow, i.e. accepted artifacts, will be saved as artifacts. The functionality of rejecting artifacts is just there
+to better keep track of which artifacts you accepted. By default, all potential artifacts the algorithm highlights will not be masked in later analyses
+unless you explicitly accept them.</p>
+</div>
+<a class="reference internal image-reference" href="_images/arts_accepted_rejected.png"><img alt="_images/arts_accepted_rejected.png" class="align-center" src="_images/arts_accepted_rejected.png" style="width: 700px;" /></a>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Make sure to release the zoom tool (by clicking on it), once you try to accept/reject artifacts. Otherwise selection
+will not work.</p>
+</div>
+<p><strong>Adding artifacts yourself:</strong> To add a single artifact event <code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">middle</span> <span class="pre">click</span></code> at the position where you have identified it. A <code class="docutils literal notranslate"><span class="pre">yellow</span> <span class="pre">dot</span></code> will appear.
+For adding longer stretches of artifacts <code class="docutils literal notranslate"><span class="pre">double</span> <span class="pre">left</span> <span class="pre">click</span></code> at the position where you think the artifact starts and then <code class="docutils literal notranslate"><span class="pre">single</span> <span class="pre">left</span> <span class="pre">click</span></code>
+where you think the artifact ends. This artifact stretch will be indicated by a yellow line. We typically exclude large stretches of data in that way
+when they appear to be peppered by artifacts.</p>
+<a class="reference internal image-reference" href="_images/arts_added.png"><img alt="_images/arts_added.png" class="align-center" src="_images/arts_added.png" style="width: 700px;" /></a>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>For adding your own artifacts, always <strong>click below y=0</strong>. This serves to keep self-identified and automatically suggested artifacts separate.</p>
+</div>
+<p>Once you are finished with artifact hunting, click on the blue <code class="docutils literal notranslate"><span class="pre">Done</span></code> button. Again a simple .txt file is created at
+<em>PEACOC_tutorial/my_results/data/my_recording/my_recording__artifacts.txt</em>:</p>
+<a class="reference internal image-reference" href="_images/arts_file.png"><img alt="_images/arts_file.png" class="align-center" src="_images/arts_file.png" style="width: 300px;" /></a>
+<p>Below the header <code class="docutils literal notranslate"><span class="pre">(artstart,artstop)</span></code> the start and end points of large artifact stretches are indicated (yellow lines in the GUI, see above). Below the header
+<code class="docutils literal notranslate"><span class="pre">saturation</span> <span class="pre">artifacts</span></code> time points of single artifact events are given (yellow dots in the GUI). Don’t worry if some artifact stretches overlap in time (as shown in this example)
+- the tool can resolve this automatically.</p>
+<div class="admonition note" id="adding-artifacts-manually">
+<p class="admonition-title">Note</p>
+<p>You can edit the file <em>my_recording__artifacts.txt</em> by hand or altogether avoid the interactive routine described here and create such a file yourself.
+If the file <em>my_recording__artifacts.txt</em> is not present, later analyses will assume that there are no artifacts.</p>
+</div>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="LFP_to_bursts.html" title="EA detection and classification"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="setting_parameters.html" title="Setting parameters"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Preprocessing</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

@@ -1,0 +1,210 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Setting parameters &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Preprocessing" href="preprocessing.html" />
+    <link rel="prev" title="Getting started" href="getting_started.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="preprocessing.html" title="Preprocessing"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Setting parameters</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Setting parameters</a><ul>
+<li><a class="reference internal" href="#how-parameters-are-handled">How parameters are handled</a></li>
+<li><a class="reference internal" href="#create-a-template">Create a template</a><ul>
+<li><a class="reference internal" href="#overwriting-defaults">Overwriting defaults</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#create-a-parameter-file-for-a-recording">Create a parameter file for a recording</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="previous chapter">Getting started</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="preprocessing.html"
+                        title="next chapter">Preprocessing</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/setting_parameters.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="setting-parameters">
+<span id="id1"></span><h1>Setting parameters<a class="headerlink" href="#setting-parameters" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="how-parameters-are-handled">
+<span id="param-intro"></span><h2>How parameters are handled<a class="headerlink" href="#how-parameters-are-handled" title="Permalink to this headline">¶</a></h2>
+<p>Parameters are handled at two different levels. The <strong>default parameters</strong> are located at
+<em>PEACOC/config/configAnalysis.yml</em> and look like this:</p>
+<a class="reference internal image-reference" href="_images/configAnalysis.png"><img alt="_images/configAnalysis.png" class="align-center" src="_images/configAnalysis.png" style="width: 500px;" /></a>
+<p>Behind each parameter and default value there is an explanation of what it is good for.
+Make a change to this file only if you are absolutely sure that you want this change for all
+for all of your analyses. For now, leave it untouched.
+In the next sections we will create experiment and recording specific parameter files where you
+can overwrite the defaults.</p>
+</div>
+<div class="section" id="create-a-template">
+<span id="param-template"></span><h2>Create a template<a class="headerlink" href="#create-a-template" title="Permalink to this headline">¶</a></h2>
+<p>We found it very useful and time-saving to create parameter templates for whole experiments, i.e. a larger number of
+recordings to which the same parameters should be applied.
+To work with templates, first create a directory where you would like to store your templates:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">mkdir</span> <span class="n">my_templates</span>
+</pre></div>
+</div>
+<p>Then copy a templates from PEACOC/templates to your directory. On Linux:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cp</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">templates</span><span class="o">/</span><span class="n">template__runparams</span><span class="o">.</span><span class="n">yml</span> <span class="n">my_templates</span><span class="o">/</span><span class="n">template_experiment1</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>On Windows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cp</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">templates</span><span class="o">/</span><span class="n">template_runparamsWin</span><span class="o">.</span><span class="n">yml</span> <span class="n">my_templates</span><span class="o">/</span><span class="n">template_experiment1</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Open the copied template (in this case <em>my_templates/template_experiment1.yml</em>), it looks like this:</p>
+<a class="reference internal image-reference" href="_images/my_template_unedited.png"><img alt="_images/my_template_unedited.png" class="align-center" src="_images/my_template_unedited.png" style="width: 500px;" /></a>
+<p>All entries in CAPITALS are place-holders, which we will now successively replace according to our setup and
+preferences:</p>
+<a class="reference internal image-reference" href="_images/my_template_findReplace2.png"><img alt="_images/my_template_findReplace2.png" class="align-center" src="_images/my_template_findReplace2.png" style="width: 500px;" /></a>
+<p id="replacement-params">Make the following replacements:</p>
+<ul class="simple">
+<li><p><code class="docutils literal notranslate"><span class="pre">PACKAGE_DIR</span></code>: where you cloned/downloaded the toolbox, e.g.: <code class="docutils literal notranslate"><span class="pre">home/weltgeischt/PEACOC_tutorial</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">DATADIR</span></code> → where you want your results saved, e.g.: <code class="docutils literal notranslate"><span class="pre">home/weltgeischt/PEACOC_tutorial/my_results/data</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">FIGDIR</span></code>: where you want the figures saved, e.g.: <code class="docutils literal notranslate"><span class="pre">home/weltgeischt/PEACOC_tutorial/my_results/figures</span></code></p></li>
+<li><p><code class="docutils literal notranslate"><span class="pre">SOURCEDIR</span></code>: directory in which you keep your raw data files, e.g.: <code class="docutils literal notranslate"><span class="pre">home/weltgeischt/PEACOC_tutorial/example_data</span></code></p></li>
+</ul>
+<div class="section" id="overwriting-defaults">
+<span id="overwrite-defaults"></span><h3>Overwriting defaults<a class="headerlink" href="#overwriting-defaults" title="Permalink to this headline">¶</a></h3>
+<p>You can also overwrite default parameters at the template level. You do this by specifying the parameter as a sub-entry
+below <em>setparams</em> (red arrows in example below).
+Here we set the offset for spike detection (<em>EdDetection</em>, Ed for epileptiform discharge) to 300 s, i.e. we exclude
+the first 5 min of the recording from spike detection:</p>
+<a class="reference internal image-reference" href="_images/my_template_editParameters.png"><img alt="_images/my_template_editParameters.png" class="align-center" src="_images/my_template_editParameters.png" style="width: 500px;" /></a>
+<p>At this stage we have created a template for a big batch of recordings.</p>
+</div>
+</div>
+<div class="section" id="create-a-parameter-file-for-a-recording">
+<span id="param-rec"></span><h2>Create a parameter file for a recording<a class="headerlink" href="#create-a-parameter-file-for-a-recording" title="Permalink to this headline">¶</a></h2>
+<p>Now we will create a parameter file specific for a single recording session. This will be the input fort the commandline
+tool. Herey ou will learn how to generate a specific parameter file from the template and how edit it.
+But first, let’s create a directory where you can store all your specific parameter files:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">mkdir</span> <span class="n">run_params</span>
+</pre></div>
+</div>
+<p>Using <em>generate_ymlsetup</em> you can automatically generate the recording specific parameter file and
+set the recording id and source file from which to import the raw data (it basically does a find-replace for
+<code class="docutils literal notranslate"><span class="pre">ANIMAL_BLOCK_ELECTRODE</span></code> and <code class="docutils literal notranslate"><span class="pre">THIS_SOURCE_FILE</span></code> in your template).
+First, you enter the toolbox and call python or ipython:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">cd</span> <span class="n">PEACOC</span>
+<span class="o">&gt;</span> <span class="n">ipython</span>
+</pre></div>
+</div>
+<p>In python you can now generate your recording specific parameter file:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span> <span class="nn">core.helpers</span> <span class="kn">import</span> <span class="n">generate_ymlsetup</span>
+<span class="n">template_path</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/my_templates/template_experiment1.yml&#39;</span>
+<span class="n">rec_id</span> <span class="o">=</span> <span class="s1">&#39;my_recording&#39;</span> <span class="c1"># I recommend using animalID_elecID_recID (eg AN115_El2_rec5)</span>
+<span class="n">datasource</span> <span class="o">=</span> <span class="s1">&#39;my_example_data.smr&#39;</span>
+<span class="n">setuppath</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/run_params/</span><span class="si">%s</span><span class="s1">_params.yml&#39;</span><span class="o">%</span><span class="n">rec_id</span>
+<span class="n">generate_ymlsetup</span><span class="p">(</span><span class="n">rec_id</span><span class="p">,</span> <span class="n">datasource</span><span class="p">,</span><span class="n">template_path</span><span class="p">,</span><span class="n">setuppath</span><span class="o">=</span><span class="n">setuppath</span><span class="p">)</span>
+<span class="n">exit</span><span class="p">()</span> <span class="c1">#to leave python</span>
+</pre></div>
+</div>
+<p>In this case <em>rec_id</em> is the id of the recording. I recommend to give it some meaningful name specifying the animal, electrode
+and number of recording. You can <em>download this example .smr file_</em> to replicate what happens
+in this tutorial.
+The variable <em>setuppath</em> specifies where the recording specific parameter file will be saved.
+Et voilà, now you have created your recording specific parameter file at <em>run_params/my_recording_params.yml</em>.</p>
+<p>You can edit further edit your recording specific parameter file by hand in the same way as :ref:` described previously for the template &lt;overwrite_defaults&gt;`.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Have a look at <em>PEACOC/examples/generate_paramfile.py</em> for creating several parameter files
+in a loop.</p>
+</div>
+<p><strong>Alternative</strong>: If you don’t like python, you can of course find/replace <code class="docutils literal notranslate"><span class="pre">ANIMAL_BLOCK_ELECTRODE</span></code> and <code class="docutils literal notranslate"><span class="pre">THIS_SOURCE_FILE</span></code> by hand too.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="preprocessing.html" title="Preprocessing"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Setting parameters</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

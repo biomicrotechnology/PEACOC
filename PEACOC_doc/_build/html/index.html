@@ -1,0 +1,177 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detecting epileptiform activity with PEACOC &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             accesskey="N">next</a> |</li>
+        <li><a href="#">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Detecting epileptiform activity with PEACOC</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="#">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Detecting epileptiform activity with PEACOC</a></li>
+<li><a class="reference internal" href="#todolist">Todolist</a></li>
+</ul>
+
+  <h4>Next topic</h4>
+  <p class="topless"><a href="getting_started.html"
+                        title="next chapter">Getting started</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/index.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="detecting-epileptiform-activity-with-peacoc">
+<h1>Detecting epileptiform activity with PEACOC<a class="headerlink" href="#detecting-epileptiform-activity-with-peacoc" title="Permalink to this headline">¶</a></h1>
+<p>PEACOC stands for <strong>P</strong>atterns of <strong>E</strong>pileptiform <strong>A</strong>ctivity: a <strong>CO</strong>ntinuum-based <strong>C</strong>lassification.
+It is s a tool that allows you to automatically <strong>detected and classify epilepitiform activity (EA) patterns</strong>.
+It transforms a local field potential (LFP) recording into a sequence of classified spike bursts and solitary spikes.
+The tool is python-based and you can execute it via the command-line.</p>
+<p>The EA patterns PEACOC identifies are:</p>
+<ul class="simple">
+<li><p><em>high-load bursts</em>, these comprise large behavioral seizures and paroxysmal and seizure-like activity (e.g. high-voltage</p></li>
+</ul>
+<p>sharp waves and hyperparoxysmal discharges)</p>
+<ul class="simple">
+<li><p><em>medium-load bursts</em>, a category bridging the continuum between high-load and low-load bursts</p></li>
+<li><p><em>low-load bursts</em>, which are looser trains of epileptiform spikes</p></li>
+<li><p><em>solitary spikes</em>, i.e. epileptiform spikes that are not part of a burst</p></li>
+</ul>
+<p>Three <strong>major analysis steps</strong> are involved: I) preprocessing (resampling, assigning the polarity,
+semiautomatic artifact detection), II) transforming the LFP into a train of epileptiform spikes, and III)
+transforming the spike train into a sequence of classified spike bursts.</p>
+<a class="reference internal image-reference" href="_images/fig6_codeflow.png"><img alt="_images/fig6_codeflow.png" class="align-center" src="_images/fig6_codeflow.png" style="width: 700px;" /></a>
+<p>The tool was originally developed for the <strong>intrahippocampal kainate mouse model</strong>, but we have seen promising results for
+other animal models of epilepsy as well. It has been used in several publications, but you will find the method best described
+in <em>Heining et al. (2021)_</em>.</p>
+<p>In this documentation you will learn how to <a class="reference internal" href="getting_started.html#getting-started"><span class="std std-ref">set everything up</span></a>, <a class="reference internal" href="setting_parameters.html#setting-parameters"><span class="std std-ref">set the parameters</span></a>,
+run the <a class="reference internal" href="preprocessing.html#preprocessing"><span class="std std-ref">preprocessing</span></a> and the <a class="reference internal" href="LFP_to_bursts.html#lfp-to-bursts"><span class="std std-ref">actual analyses</span></a>, <a class="reference internal" href="access_results.html#access-results"><span class="std std-ref">harvest the results</span></a>,
+and <a class="reference internal" href="access_metadata.html#access-metadata"><span class="std std-ref">retrieve metadata and diagnostic metrics</span></a>.
+You can download the example data and the files successively generated in this tutorial from <em>here_</em>.
+If can also download a <em>pdf-version_</em> of this documentation.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#download-the-toolbox">Download the toolbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#set-up-a-virtual-environment-recommended">Set up a virtual environment (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#install-requirements">Install requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setting_parameters.html">Setting parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#how-parameters-are-handled">How parameters are handled</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#create-a-template">Create a template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#create-a-parameter-file-for-a-recording">Create a parameter file for a recording</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#load-and-resample">Load and resample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#assign-polarity">Assign polarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#detect-artifacts">Detect artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LFP_to_bursts.html">EA detection and classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="LFP_to_bursts.html#spike-detection">Spike detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LFP_to_bursts.html#burst-detection-and-classification">Burst detection and classification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="output.html#results-hdf5">Results (HDF5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html#quality-control-figures">Quality control figures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="access_results.html">Accessing results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="access_results.html#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_results.html#matlab">Matlab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="access_metadata.html">Accessing metadata and diagnostics metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#odml">odML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#yaml">YAML</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+<div class="section" id="todolist">
+<h1>Todolist<a class="headerlink" href="#todolist" title="Permalink to this headline">¶</a></h1>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="getting_started.html" title="Getting started"
+             >next</a> |</li>
+        <li><a href="#">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Detecting epileptiform activity with PEACOC</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>

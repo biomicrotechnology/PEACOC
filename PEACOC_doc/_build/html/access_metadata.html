@@ -1,0 +1,211 @@
+
+<!DOCTYPE html>
+
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Accessing metadata and diagnostics metrics &#8212; PEACOC 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <link rel="stylesheet" href="_static/sphinxdoc.css" type="text/css" />
+    <script id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Accessing results" href="access_results.html" /> 
+  </head><body></p>
+<div style="background-color: white; text-align: left; padding: 10px 10px 15px 15px;">
+<h1 style="font-size: 3em;"><img src="_static/peacoc_logo.png" alt="" width="318" height="120" /></h1>
+</div>
+<p>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="access_results.html" title="Accessing results"
+             accesskey="P">previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Accessing metadata and diagnostics metrics</a></li> 
+      </ul>
+    </div> 
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+  <h3><a href="index.html">Table of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Accessing metadata and diagnostics metrics</a><ul>
+<li><a class="reference internal" href="#general">General</a></li>
+<li><a class="reference internal" href="#odml">odML</a><ul>
+<li><a class="reference internal" href="#example-1">Example 1</a></li>
+<li><a class="reference internal" href="#example-2">Example 2</a></li>
+<li><a class="reference internal" href="#example-3">Example 3</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#yaml">YAML</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="access_results.html"
+                        title="previous chapter">Accessing results</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/access_metadata.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" />
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="accessing-metadata-and-diagnostics-metrics">
+<span id="access-metadata"></span><h1>Accessing metadata and diagnostics metrics<a class="headerlink" href="#accessing-metadata-and-diagnostics-metrics" title="Permalink to this headline">¶</a></h1>
+<p>You can render metadata and diagnostics metrics automatically in human readable form using odML or yaml. A single metadata
+and/or diagnostics file is created for a specific recording.</p>
+<p><strong>Metadata</strong> includes the parameters used for analyses and details about who analyzed the data when and the paths to the
+figures created during the different analysis steps. Therefore metadata is sub-section into the fields:</p>
+<ul class="simple">
+<li><p><cite>EdDetection</cite>, for spectral and amplitude based spike detection</p></li>
+<li><p><cite>SpikeSorting</cite>, for sorting of spikes to remove false positives</p></li>
+<li><p><cite>BurstClassification</cite>, for burst detection and classification</p></li>
+</ul>
+<p><strong>Diagnostics metrics</strong> include metrics we commonly use to address the severity of epilepsy. These include:</p>
+<ul class="simple">
+<li><p><cite>rate(spikes)</cite>, the rate of spikes detected during the recording (/s)</p></li>
+<li><p><cite>rate(high-load)</cite>, the rate of high-load bursts (/min)</p></li>
+<li><p><cite>tfrac(high-load)</cite>, the fraction of time spent in high-load bursts</p></li>
+<li><p><cite>tfrac(bursts)</cite>, the fraction of time spent in bursts of any kind</p></li>
+<li><p><cite>tfrac(free)</cite>, the fraction of time spent outside of bursts</p></li>
+<li><p><cite>burstiness</cite>, (std(ISI)-mean(ISI))/(std(ISI)+mean(ISI)); ISI being interspike interval, see Goh and Barabási (2008)</p></li>
+</ul>
+<div class="section" id="general">
+<h2>General<a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<p>Before you start, make sure that you are in the virtual environment for PEACOC if you have <a class="reference internal" href="getting_started.html#virtual-env"><span class="std std-ref">set up one</span></a>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">workon</span> <span class="n">peacoc</span>
+</pre></div>
+</div>
+<p>… and make sure you are in the folder of PEACOC. My command-line would look like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="p">(</span><span class="n">peacoc</span><span class="p">)</span> <span class="n">weltgeischt</span><span class="nd">@heulsuse</span><span class="p">:</span><span class="o">~/</span><span class="n">PEACOC_tutorial</span><span class="o">/</span><span class="n">PEACOC</span>
+</pre></div>
+</div>
+<p>The general <strong>command structure</strong> for rendering metadata and diagnostics in both formats looks like this:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">runthrough</span><span class="o">/</span><span class="n">metadata_diagnostics</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="nb">format</span><span class="o">=&lt;</span><span class="nb">format</span><span class="o">&gt;</span> <span class="o">-&lt;</span><span class="n">options</span><span class="o">&gt;</span> <span class="o">&lt;</span><span class="n">path</span><span class="o">/</span><span class="n">to</span><span class="o">/</span><span class="n">paramfile</span><span class="o">.</span><span class="n">yml</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p><cite>&lt;format&gt;</cite> can be either <cite>yaml</cite> or <cite>odml</cite>, depending on your taste of filetype</p>
+<p><cite>&lt;options&gt;</cite> can be:</p>
+<ul class="simple">
+<li><p><cite>d</cite> for rendering diagnostic metrics</p></li>
+<li><p><cite>m</cite> for rendering metadata metrics</p></li>
+<li><p><cite>md</cite> for rendering metadata and disagnostic metrics in a single file</p></li>
+</ul>
+</div>
+<div class="section" id="odml">
+<span id="metaodml"></span><h2>odML<a class="headerlink" href="#odml" title="Permalink to this headline">¶</a></h2>
+<p>If you want to know more about odML, have a look at <a class="reference external" href="https://github.com/G-Node/python-odml/blob/master/doc/tutorial.rst">this</a>.
+To be able to render something in odML format, you need to have odml installed. You can do so using pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">pip3</span> <span class="n">install</span> <span class="n">odml</span>
+</pre></div>
+</div>
+<div class="section" id="example-1">
+<span id="example1-meta"></span><h3>Example 1<a class="headerlink" href="#example-1" title="Permalink to this headline">¶</a></h3>
+<p>Now, lets render <strong>diagnostic metrics</strong> of our example recording in <strong>odML format</strong>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">runthrough</span><span class="o">/</span><span class="n">metadata_diagnostics</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="n">odml</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">weltgeischt</span><span class="o">/</span><span class="n">PEACOC_tutorial</span><span class="o">/</span><span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>This generates a file <em>my_recording__diagnostics.xml</em>  at <a class="reference internal" href="setting_parameters.html#replacement-params"><span class="std std-ref">the folder we had assigned to store the data</span></a>,
+in my case <em>/home/weltgeischt/PEACOC_tutorial/my_results/data/my_recording</em>:</p>
+<a class="reference internal image-reference" href="_images/md_diagnostics_odml_folder.png"><img alt="_images/md_diagnostics_odml_folder.png" class="align-center" src="_images/md_diagnostics_odml_folder.png" style="width: 300px;" /></a>
+<p>Open the file in your browser (e.g. right click on the file and select <cite>Open With &gt; Firefox</cite>). It should look like this:</p>
+<a class="reference internal image-reference" href="_images/md_diagnostics_odml1.png"><img alt="_images/md_diagnostics_odml1.png" class="align-center" src="_images/md_diagnostics_odml1.png" style="width: 500px;" /></a>
+<p>If you now click at the blue <cite>Diagnostics</cite> tab, it will bring you to all the beautiful diagnostic metrics:</p>
+<a class="reference internal image-reference" href="_images/md_diagnostics_odml2.png"><img alt="_images/md_diagnostics_odml2.png" class="align-center" src="_images/md_diagnostics_odml2.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="example-2">
+<span id="example2-meta"></span><h3>Example 2<a class="headerlink" href="#example-2" title="Permalink to this headline">¶</a></h3>
+<p>Now let’s render <strong>metadata</strong> in <strong>odML format</strong>. You type the same as in <a class="reference internal" href="#example1-meta"><span class="std std-ref">the previous example</span></a>,
+only that you now use option <cite>-m</cite> instead of <cite>-d</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">runthrough</span><span class="o">/</span><span class="n">metadata_diagnostics</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="n">odml</span> <span class="o">-</span><span class="n">m</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">weltgeischt</span><span class="o">/</span><span class="n">PEACOC_tutorial</span><span class="o">/</span><span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>This generates a file <em>my_recording__metadata.xml</em> in the results folder. Open it in your browser. As you see it displays a
+section for each analysis step, with subsection called <cite>…_methods</cite> and <cite>…_info</cite>. In the former you find the parameters
+used for running the analyses, in the latter you have links to figures generated and who ran the procedure when. Clicking
+on the respective subsection will directly bring you to its content.</p>
+<a class="reference internal image-reference" href="_images/md_metadata_odml.png"><img alt="_images/md_metadata_odml.png" class="align-center" src="_images/md_metadata_odml.png" style="width: 500px;" /></a>
+</div>
+<div class="section" id="example-3">
+<h3>Example 3<a class="headerlink" href="#example-3" title="Permalink to this headline">¶</a></h3>
+<p>To produce a single file that contains both <strong>metadata and diagnostic metrics</strong> in <strong>odML format</strong>, use option <cite>-md</cite>:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">runthrough</span><span class="o">/</span><span class="n">metadata_diagnostics</span><span class="o">.</span><span class="n">py</span>  <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="n">odml</span> <span class="o">-</span><span class="n">md</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">weltgeischt</span><span class="o">/</span><span class="n">PEACOC_tutorial</span><span class="o">/</span><span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>The file generated is called <em>my_recording__metadata_diagnostics.xml</em> and also resides in the main results folder.
+As you see, now the file incorporates both, the diagnostic metrics from <a class="reference internal" href="#example1-meta"><span class="std std-ref">Example 1</span></a>, and the metadata from <a class="reference internal" href="#example2-meta"><span class="std std-ref">Example 2</span></a>:</p>
+<a class="reference internal image-reference" href="_images/md_metadataAndDiagnostics_odml.png"><img alt="_images/md_metadataAndDiagnostics_odml.png" class="align-center" src="_images/md_metadataAndDiagnostics_odml.png" style="width: 500px;" /></a>
+</div>
+</div>
+<div class="section" id="yaml">
+<span id="metayml"></span><h2>YAML<a class="headerlink" href="#yaml" title="Permalink to this headline">¶</a></h2>
+<p>For the output format <strong>yaml</strong> it works exactly the same as described for odML in the previous section, i.e. you can use
+option <cite>-d</cite>, <cite>-m</cite> or <cite>-md</cite>. For example, to get the diagnostic metrics you type:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">runthrough</span><span class="o">/</span><span class="n">metadata_diagnostics</span><span class="o">.</span><span class="n">py</span> <span class="o">--</span><span class="nb">format</span><span class="o">=</span><span class="n">yaml</span> <span class="o">-</span><span class="n">d</span> <span class="o">/</span><span class="n">home</span><span class="o">/</span><span class="n">weltgeischt</span><span class="o">/</span><span class="n">PEACOC_tutorial</span><span class="o">/</span><span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>This generates a file <em>my_recording__diagnostics.yml</em> in the results folder. Just open this file with some basic text editor (by clicking on it):</p>
+<a class="reference internal image-reference" href="_images/md_diagnostics_yml.png"><img alt="_images/md_diagnostics_yml.png" class="align-center" src="_images/md_diagnostics_yml.png" style="width: 700px;" /></a>
+<p>If you are not in the mood of <a class="reference internal" href="access_results.html#access-results"><span class="std std-ref">accessing the results through matlab or python</span></a>, you can conveniently read some essential diagnostic
+metrics from this file.</p>
+</div>
+</div>
+
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="access_results.html" title="Accessing results"
+             >previous</a> |</li>
+        <li><a href="index.html">home</a>|&nbsp;</li>
+        <li><a href="search.html">search</a>|&nbsp;</li>
+
+        <li class="nav-item nav-item-this"><a href="">Accessing metadata and diagnostics metrics</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2021, Katharina Heining.
+      Created using <a href="https://www.sphinx-doc.org/">Sphinx</a> 3.5.2.
+    </div>
+  </body>
+</html>
