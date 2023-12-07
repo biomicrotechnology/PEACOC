@@ -1,5 +1,5 @@
 # PEACOC: Patterns of Epileptiform Activity: a COntinuum-based Classification (and detection)
-Publication: [Inserted upon acceptance]
+**Publication:** Heining, Katharina, et al. "Bursts with high and low load of epileptiform spikes show context-dependent correlations in epileptic mice." eneuro 6.5 (2019).
 
 ### 0 – Get prerequisites
 * Install Python (both Python 2 and 3 work!)
