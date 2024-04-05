@@ -3,8 +3,7 @@
 
 
 ### FULL SPHINX DOCUMENTATION
-open the file **...PEACOC/PEACOC_doc/_build/html/index.html** in your browser and  follow the instructions.
-
+go to https://peacoc.readthedocs.io/en/latest/index.html and follow the instructions
 
 ### QUICKSTART
 ### 0 – Get prerequisites
