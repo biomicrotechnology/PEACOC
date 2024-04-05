@@ -7,6 +7,7 @@
   <title>Accessing results &mdash; PEACOC 0.0.1 documentation</title>
       <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
       <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+      <link rel="stylesheet" type="text/css" href="_static/plot_directive.css" />
 
   
   <!--[if lt IE 9]>
@@ -120,13 +121,28 @@ during analyses in the <a class="reference internal" href="output.html#resultshd
 </pre></div>
 </div>
 <p>From within python, we first import some useful modules:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">import</span> <span class="nn">core.ea_management</span> <span class="k">as</span> <span class="nn">eam</span>
+<span class="gp">In [2]: </span><span class="kn">import</span> <span class="nn">core.helpers</span> <span class="k">as</span> <span class="nn">hf</span>
+<span class="gp">In [3]: </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">In [4]: </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+</pre></div>
+</div>
 </section>
 <section id="initialize-recording-object">
 <h3>Initialize recording object<a class="headerlink" href="#initialize-recording-object" title="Permalink to this heading"></a></h3>
 <p>There are two ways to initialize a recording object and thereby gain access to the data. First,
 you can initialize a recording object with its parameter file.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [2]: </span><span class="n">paramfile</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/run_params/my_recording_params.yml&#39;</span>
+<span class="gp">In [6]: </span><span class="n">aRec</span> <span class="o">=</span> <span class="n">eam</span><span class="o">.</span><span class="n">Rec</span><span class="p">(</span><span class="n">init_ymlpath</span><span class="o">=</span><span class="n">paramfile</span><span class="p">)</span>
+</pre></div>
+</div>
 <p>Alternatively, you could initialize it directly with the <a class="reference internal" href="output.html#resultshdf5"><span class="std std-ref">results file</span></a> results file.
 If you want to plot colorful bursts, this option also requires you to give the path to the SOM.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [3]: </span><span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/my_results/data/my_recording/my_recording__blipSpy.h5&#39;</span>
+<span class="gp">In [8]: </span><span class="n">sompath</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/PEACOC/config/som.h5&#39;</span>
+<span class="gp">In [9]: </span><span class="n">aRec</span> <span class="o">=</span> <span class="n">eam</span><span class="o">.</span><span class="n">Rec</span><span class="p">(</span><span class="n">init_datapath</span><span class="o">=</span><span class="n">datapath</span><span class="p">,</span><span class="n">sompath</span><span class="o">=</span><span class="n">sompath</span><span class="p">)</span>
+</pre></div>
+</div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>If you dislike objects and want to extract the data directly from the hdf5 file, you are
@@ -136,6 +152,10 @@ allowed to <a class="reference internal" href="#direct-hdf5access"><span class="
 <section id="visualize-ea-sequences">
 <h3>Visualize EA sequences<a class="headerlink" href="#visualize-ea-sequences" title="Permalink to this heading"></a></h3>
 <p>Now let’s plot the LFP and the EA we detected:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span><span class="s1">&#39;artifacts&#39;</span><span class="p">,</span><span class="s1">&#39;spikes&#39;</span><span class="p">,</span><span class="s1">&#39;singlets&#39;</span><span class="p">,</span><span class="s1">&#39;bursts&#39;</span><span class="p">],</span><span class="n">legendOn</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">In [11]: </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>In the resulting plot you see the LFP trace (bottom), all spikes detected (middle, red ticks), and the sequence
 of bursts (top colored according to category) and solitary spikes (black ticks). The part of the LFP that we
 annotated as artifact was disregarded for analyses and is shown in a yellow shade:</p>
@@ -146,24 +166,138 @@ and <cite>XL</cite> and <cite>L</cite> bursts correspond to <cite>high-load</cit
 (<cite>LI1</cite>) are marked in purple (technically these are also <cite>XL</cite> bursts).</p>
 <p>If you prefer the more compact, <strong>load-based categorizations</strong> (as in the papers) you can switch the naming scheme
 and coloring by executing:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">loadify_bursts</span><span class="p">()</span>
+</pre></div>
+</div>
 <p>As you can see when plotting now, colors and cluster identity are now given in the load scheme:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [6]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span><span class="s1">&#39;artifacts&#39;</span><span class="p">,</span><span class="s1">&#39;spikes&#39;</span><span class="p">,</span><span class="s1">&#39;singlets&#39;</span><span class="p">,</span><span class="s1">&#39;bursts&#39;</span><span class="p">],</span><span class="n">legendOn</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">loadlegend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">In [14]: </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <a class="reference internal image-reference" href="_images/access_loadplot.png"><img alt="_images/access_loadplot.png" class="align-center" src="_images/access_loadplot.png" style="width: 700px;" /></a>
 </section>
 <section id="accessing-the-results-examples">
 <h3>Accessing the results (examples)<a class="headerlink" href="#accessing-the-results-examples" title="Permalink to this heading"></a></h3>
 <p>The recording object provides a convenient access to everything that was analyzed:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [7]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">dur</span><span class="c1"># duration of whole recording</span>
+<span class="gh">Out[7]: </span><span class="go">4784.398</span>
+
+<span class="gp">In [8]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">offset</span> <span class="c1">#the time we excluded at the beginning ot the recording</span>
+<span class="gh">Out[8]: </span><span class="go">300</span>
+
+<span class="gp">In [9]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">artifactTimes</span> <span class="c1">#start and stop times of annoted artifacts</span>
+<span class="gh">Out[9]: </span>
+<span class="go">array([[2978.61, 3348.16],</span>
+<span class="go">       [4153.07, 4157.07]])</span>
+
+<span class="gp">In [10]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">durAnalyzed</span><span class="c1"># duration - offset - artifact times</span>
+<span class="gh">Out[10]: </span><span class="go">4110.848</span>
+</pre></div>
+</div>
 <p>You can directy extract the <strong>spiketimes</strong> and e.g. calculate the overall <strong>spike rate</strong> from it:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">spiketimes</span> <span class="c1">#timepoints of spikes detected</span>
+<span class="gh">Out[11]: </span><span class="go">array([ 350.472,  352.368,  353.184, ..., 4783.702, 4784.058, 4784.198])</span>
+
+<span class="gp">In [12]: </span><span class="n">spikerate</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">aRec</span><span class="o">.</span><span class="n">spiketimes</span><span class="p">)</span><span class="o">/</span><span class="n">aRec</span><span class="o">.</span><span class="n">durAnalyzed</span>
+
+<span class="gp">In [13]: </span><span class="nb">print</span> <span class="p">(</span><span class="n">spikerate</span><span class="p">,</span><span class="s1">&#39;spikes/second&#39;</span><span class="p">)</span>
+<span class="go">0.4208377444264541 spikes/second</span>
+</pre></div>
+</div>
 <p>Our recording object contains a list of burst objects, that is the bursts that happend during the recording:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [14]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">bursts</span> <span class="c1">#list of burst objects</span>
+<span class="gh">Out[14]: </span>
+<span class="go">[&lt;core.ea_management.Burst at 0x7f79bd806c88&gt;,</span>
+<span class="go"> &lt;core.ea_management.Burst at 0x7f79b7cd2e48&gt;,</span>
+<span class="go"> &lt;core.ea_management.Burst at 0x7f79b7cd2b70&gt;,</span>
+<span class="go">    .......................................</span>
+<span class="go"> &lt;core.ea_management.Burst at 0x7f79b7cf16d8&gt;]</span>
+</pre></div>
+</div>
 <p>Each <strong>burst object</strong> has a start and stop point in time (<cite>.start</cite>,`.stop`), a duration (<cite>.dur</cite>), a category (<cite>.cname</cite>),
 a color (<cite>.color</cite>, useful for plotting), a listing of its constituent spikes (<cite>.spiketimes</cite>), a spike load index
 (<cite>.si</cite>) and a few other properties.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [15]: </span><span class="n">B</span> <span class="o">=</span> <span class="n">aRec</span><span class="o">.</span><span class="n">bursts</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="c1"># for example lets pick burst number 10 and name it</span>
+
+<span class="gp">In [16]: </span><span class="n">B</span><span class="o">.</span><span class="n">start</span>
+<span class="gh">Out[16]: </span><span class="go">919.578</span>
+
+<span class="gp">In [17]: </span><span class="n">B</span><span class="o">.</span><span class="n">stop</span>
+<span class="gh">Out[17]: </span><span class="go">923.682</span>
+
+<span class="gp">In [18]: </span><span class="n">B</span><span class="o">.</span><span class="n">roi</span> <span class="c1">#start and stop time</span>
+<span class="gh">Out[18]: </span><span class="go">[919.578, 923.682]</span>
+
+<span class="gp">In [19]: </span><span class="n">B</span><span class="o">.</span><span class="n">dur</span>
+<span class="gh">Out[19]: </span><span class="go">4.104000000000042</span>
+
+<span class="gp">In [20]: </span><span class="n">B</span><span class="o">.</span><span class="n">cname</span>
+<span class="gh">Out[20]: </span><span class="go">&#39;low-load&#39;</span>
+
+<span class="gp">In [21]: </span><span class="n">B</span><span class="o">.</span><span class="n">color</span>
+<span class="gh">Out[21]: </span><span class="go">&#39;#4476bd&#39;</span>
+
+<span class="gp">In [22]: </span><span class="n">B</span><span class="o">.</span><span class="n">spiketimes</span>
+<span class="gh">Out[22]: </span><span class="go">array([919.578, 921.264, 923.258, 923.682])</span>
+
+<span class="gp">In [23]: </span><span class="n">B</span><span class="o">.</span><span class="n">si</span> <span class="c1">#None because not classified on the SOM (&lt;5 spikes), so lets pick a different example ...</span>
+
+<span class="gp">In [24]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">bursts</span><span class="p">[</span><span class="mi">33</span><span class="p">]</span><span class="o">.</span><span class="n">si</span>
+<span class="gh">Out[24]: </span><span class="go">0.17557326391422834</span>
+</pre></div>
+</div>
 <p>You can <strong>collect burst objects</strong> of a certain type and perform computations on them.
 Let’s e.g. collect high-load bursts and calculate their rate:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [25]: </span><span class="n">hl_bursts</span> <span class="o">=</span> <span class="p">[</span><span class="n">B</span> <span class="k">for</span> <span class="n">B</span> <span class="ow">in</span> <span class="n">aRec</span><span class="o">.</span><span class="n">bursts</span> <span class="k">if</span> <span class="n">B</span><span class="o">.</span><span class="n">cname</span><span class="o">==</span><span class="s1">&#39;high-load&#39;</span><span class="p">]</span> <span class="c1">#list of burst objects</span>
+<span class="gp">In [34]: </span><span class="n">N_hl</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">hl_bursts</span><span class="p">)</span> <span class="c1">#number of high-load bursts</span>
+<span class="gp">In [35]: </span><span class="n">rate_hl</span> <span class="o">=</span> <span class="n">N_hl</span><span class="o">/</span><span class="n">aRec</span><span class="o">.</span><span class="n">durAnalyzed</span>
+<span class="gp">In [36]: </span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;High-load rate (/min): &#39;</span><span class="p">,</span> <span class="n">rate_hl</span><span class="o">*</span><span class="mf">60.</span><span class="p">)</span><span class="c1">#*60 to get /min</span>
+<span class="go">High-load rate (/min):  0.2919105741686387</span>
+</pre></div>
+</div>
 <p>Similarly we can also calculate the absolute <strong>time spent in high-load bursts</strong> and the fraction of time
 spent in high-load bursts:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [26]: </span><span class="n">dur_hl</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">B</span><span class="o">.</span><span class="n">dur</span> <span class="k">for</span> <span class="n">B</span> <span class="ow">in</span> <span class="n">hl_bursts</span><span class="p">])</span>
+
+<span class="gp">In [27]: </span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Total hl-duration (min): &#39;</span><span class="p">,</span> <span class="n">dur_hl</span><span class="o">/</span><span class="mf">60.</span><span class="p">)</span><span class="c1">#/ 60 to get min</span>
+<span class="go">Total hl-duration (min):  5.909600000000008</span>
+
+<span class="gp">In [28]: </span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Relative time in high-loads: &#39;</span><span class="p">,</span> <span class="n">dur_hl</span><span class="o">/</span><span class="n">aRec</span><span class="o">.</span><span class="n">durAnalyzed</span><span class="p">)</span><span class="c1">#/ 60 to get min</span>
+<span class="go">Relative time in high-loads:  0.08625373645534948</span>
+</pre></div>
+</div>
 <p>You can also address <strong>EA-free snippets</strong> as objects, in a way very similar to bursts:</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [29]: </span><span class="n">aRec</span><span class="o">.</span><span class="n">freesnips</span> <span class="c1">#list of EA-free snippet objects in the recording</span>
+<span class="gh">Out[29]: </span>
+<span class="go">[&lt;core.ea_management.Period at 0x7f79b410cda0&gt;,</span>
+<span class="go"> &lt;core.ea_management.Period at 0x7f79b410cdd8&gt;,</span>
+<span class="go"> &lt;core.ea_management.Period at 0x7f79b410ccc0&gt;,</span>
+<span class="go">    .......................................</span>
+<span class="go"> &lt;core.ea_management.Period at 0x7f79b4114c18&gt;]</span>
+
+<span class="gp">In [30]: </span><span class="n">aFree</span> <span class="o">=</span> <span class="n">aRec</span><span class="o">.</span><span class="n">freesnips</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span> <span class="c1">#10th EA-free snippet</span>
+
+<span class="gp">In [31]: </span><span class="n">aFree</span><span class="o">.</span><span class="n">roi</span> <span class="c1">#start and stop time</span>
+<span class="gh">Out[31]: </span><span class="go">[586.5360000000001, 593.752]</span>
+
+<span class="gp">In [32]: </span><span class="n">aFree</span><span class="o">.</span><span class="n">dur</span> <span class="c1">#duration</span>
+<span class="gh">Out[32]: </span><span class="go">7.2159999999998945</span>
+</pre></div>
+</div>
 <p>If you want to concentrate your analysis on a particular <strong>cutout</strong> of data you can do so too.
 The cutout can then be analysed and visualized in the same way as a the whole recording</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [33]: </span><span class="n">cutRec</span> <span class="o">=</span> <span class="n">eam</span><span class="o">.</span><span class="n">EAPeriod</span><span class="p">(</span><span class="mf">3630.</span><span class="p">,</span><span class="mf">3900.</span><span class="p">,</span><span class="n">parentobj</span><span class="o">=</span><span class="n">aRec</span><span class="p">)</span> <span class="c1">#cut out from recording object</span>
+
+<span class="gp">In [34]: </span><span class="n">cutRec</span><span class="o">.</span><span class="n">bursts</span><span class="p">[</span><span class="mi">10</span><span class="p">]</span><span class="o">.</span><span class="n">dur</span> <span class="c1">#duration of the 10th burst in the cutout</span>
+<span class="gh">Out[34]: </span><span class="go">0.43039182282791444</span>
+
+<span class="gp">In [35]: </span><span class="nb">print</span> <span class="p">(</span><span class="s1">&#39;Cutout spikerate: &#39;</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">cutRec</span><span class="o">.</span><span class="n">spiketimes</span><span class="p">)</span><span class="o">/</span><span class="n">cutRec</span><span class="o">.</span><span class="n">dur</span><span class="p">,</span><span class="s1">&#39;spikes/second&#39;</span><span class="p">)</span>
+<span class="go">Cutout spikerate:  1.1814814814814816 spikes/second</span>
+
+<span class="gp">In [36]: </span><span class="n">cutRec</span><span class="o">.</span><span class="n">plot</span><span class="p">([</span><span class="s1">&#39;raw&#39;</span><span class="p">,</span><span class="s1">&#39;artifacts&#39;</span><span class="p">,</span><span class="s1">&#39;spikes&#39;</span><span class="p">,</span><span class="s1">&#39;singlets&#39;</span><span class="p">,</span><span class="s1">&#39;bursts&#39;</span><span class="p">])</span> <span class="c1">#plot cutout</span>
+<span class="gp">In [48]: </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
 <a class="reference internal image-reference" href="_images/access_cutout.png"><img alt="_images/access_cutout.png" class="align-center" src="_images/access_cutout.png" style="width: 700px;" /></a>
 </section>
 <section id="directly-extract-data-from-hdf5">
@@ -171,6 +305,35 @@ The cutout can then be analysed and visualized in the same way as a the whole re
 <p>You can also directly extract the data directly from the <a class="reference internal" href="output.html#resultshdf5"><span class="std std-ref">main results file</span></a>.
 If you want to operate with data-arrays directly this might be a more efficient solution.
 In the following, <cite>datapath</cite> refers to the path of the main results file.</p>
+<div class="highlight-ipython notranslate"><div class="highlight"><pre><span></span><span class="gp">In [37]: </span><span class="n">datapath</span> <span class="o">=</span> <span class="s1">&#39;/home/weltgeischt/PEACOC_tutorial/my_results/data/my_recording/my_recording__blipSpy.h5&#39;</span>
+
+<span class="gp">In [38]: </span><span class="n">results</span> <span class="o">=</span> <span class="n">hf</span><span class="o">.</span><span class="n">open_hdf5</span><span class="p">(</span><span class="n">datapath</span><span class="p">)</span> <span class="c1">#this opens the main results file</span>
+
+<span class="gp">In [39]: </span><span class="nb">print</span> <span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="c1"># gives you the sub-fields of the resultsfile</span>
+<span class="go">dict_keys([&#39;burstclasses&#39;, &#39;dischargedict_cleaned&#39;, &#39;dischargedict_raw&#39;, &#39;raw_data&#39;])</span>
+
+<span class="gp">In [40]: </span><span class="n">burstdata</span> <span class="o">=</span> <span class="n">results</span><span class="p">[</span><span class="s1">&#39;burstclasses&#39;</span><span class="p">][</span><span class="s1">&#39;data&#39;</span><span class="p">]</span>
+
+<span class="gp">In [41]: </span><span class="nb">print</span> <span class="p">(</span><span class="n">burstdata</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span> <span class="c1"># whats in the burst data?</span>
+<span class="go">dict_keys([&#39;params&#39;, &#39;values&#39;])</span>
+
+<span class="gp">In [42]: </span><span class="n">burstdata</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span> <span class="c1">#these are whats in the &#39;values&#39;</span>
+<span class="gh">Out[42]: </span><span class="go">[&#39;key_id&#39;, &#39;start&#39;, &#39;stop&#39;, &#39;clustid&#39;, &#39;seizidx&#39;, &#39;bmu&#39;]</span>
+
+<span class="gp">In [43]: </span><span class="n">burstdata</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span> <span class="c1"># (number of bursts) x (number of parameters)</span>
+<span class="gh">Out[43]: </span><span class="go">(125, 6)</span>
+
+<span class="gp">In [44]: </span><span class="n">starttimes</span> <span class="o">=</span> <span class="n">burstdata</span><span class="p">[</span><span class="s1">&#39;values&#39;</span><span class="p">][:,</span><span class="n">burstdata</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">index</span><span class="p">(</span><span class="s1">&#39;start&#39;</span><span class="p">)]</span> <span class="c1"># starttimes of all bursts</span>
+
+<span class="gp">In [45]: </span><span class="n">starttimes</span>
+<span class="gh">Out[45]: </span>
+<span class="go">array([ 445.338     ,  846.258     ,  860.334     , 1031.31      ,</span>
+<span class="go">       1081.86      , 1467.002     , 1500.36      , 1509.08      ,</span>
+<span class="go">        ....................................................</span>
+<span class="go">       4346.366     , 4454.184     , 4617.296     , 4710.278     ,</span>
+<span class="go">       4759.026     ])</span>
+</pre></div>
+</div>
 <p>As you have seen, you can get out a lot from the data. Happy hacking and exploring!</p>
 </section>
 </section>
