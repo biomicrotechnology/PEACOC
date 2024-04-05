@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Detecting epileptiform activity with PEACOC &mdash; PEACOC 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=f6245a2f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Getting started" href="getting_started.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            PEACOC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setting_parameters.html">Setting parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l1"><a class="reference internal" href="LFP_to_bursts.html">EA detection and classification</a></li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="access_results.html">Accessing results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="access_metadata.html">Accessing metadata and diagnostics metrics</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">PEACOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Detecting epileptiform activity with PEACOC</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="detecting-epileptiform-activity-with-peacoc">
+<h1>Detecting epileptiform activity with PEACOC<a class="headerlink" href="#detecting-epileptiform-activity-with-peacoc" title="Permalink to this heading"></a></h1>
+<p>PEACOC stands for <strong>P</strong>atterns of <strong>E</strong>pileptiform <strong>A</strong>ctivity: a <strong>CO</strong>ntinuum-based <strong>C</strong>lassification.
+It is s a tool that allows you to automatically <strong>detected and classify epilepitiform activity (EA) patterns</strong>.
+It transforms a local field potential (LFP) recording into a sequence of classified spike bursts and solitary spikes.
+The tool is python-based and you can execute it via the command-line.</p>
+<p>The EA patterns PEACOC identifies are:</p>
+<ul class="simple">
+<li><p><em>high-load bursts</em>, these comprise large behavioral seizures and paroxysmal and seizure-like activity (e.g. high-voltage</p></li>
+</ul>
+<p>sharp waves and hyperparoxysmal discharges)</p>
+<ul class="simple">
+<li><p><em>medium-load bursts</em>, a category bridging the continuum between high-load and low-load bursts</p></li>
+<li><p><em>low-load bursts</em>, which are looser trains of epileptiform spikes</p></li>
+<li><p><em>solitary spikes</em>, i.e. epileptiform spikes that are not part of a burst</p></li>
+</ul>
+<p>Three <strong>major analysis steps</strong> are involved: I) preprocessing (resampling, assigning the polarity,
+semiautomatic artifact detection), II) transforming the LFP into a train of epileptiform spikes, and III)
+transforming the spike train into a sequence of classified spike bursts.</p>
+<a class="reference internal image-reference" href="_images/fig6_codeflow.png"><img alt="_images/fig6_codeflow.png" class="align-center" src="_images/fig6_codeflow.png" style="width: 700px;" /></a>
+<p>The tool was originally developed for the <strong>intrahippocampal kainate mouse model</strong>, but we have seen promising results for
+other animal models of epilepsy as well. It has been used in several publications, but you will find the method best described
+in <em>Heining et al. (2021)_</em>.</p>
+<p>In this documentation you will learn how to <a class="reference internal" href="getting_started.html#getting-started"><span class="std std-ref">set everything up</span></a>, <a class="reference internal" href="setting_parameters.html#setting-parameters"><span class="std std-ref">set the parameters</span></a>,
+run the <a class="reference internal" href="preprocessing.html#preprocessing"><span class="std std-ref">preprocessing</span></a> and the <a class="reference internal" href="LFP_to_bursts.html#lfp-to-bursts"><span class="std std-ref">actual analyses</span></a>, <a class="reference internal" href="access_results.html#access-results"><span class="std std-ref">harvest the results</span></a>,
+and <a class="reference internal" href="access_metadata.html#access-metadata"><span class="std std-ref">retrieve metadata and diagnostic metrics</span></a>.
+You can download the example data and the files successively generated in this tutorial from <em>here_</em>.
+If can also download a <em>pdf-version_</em> of this documentation.</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#download-the-toolbox">Download the toolbox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#set-up-a-virtual-environment-recommended">Set up a virtual environment (recommended)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="getting_started.html#install-requirements">Install requirements</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="setting_parameters.html">Setting parameters</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#how-parameters-are-handled">How parameters are handled</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#create-a-template">Create a template</a></li>
+<li class="toctree-l2"><a class="reference internal" href="setting_parameters.html#create-a-parameter-file-for-a-recording">Create a parameter file for a recording</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#load-and-resample">Load and resample</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#assign-polarity">Assign polarity</a></li>
+<li class="toctree-l2"><a class="reference internal" href="preprocessing.html#detect-artifacts">Detect artifacts</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="LFP_to_bursts.html">EA detection and classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="LFP_to_bursts.html#spike-detection">Spike detection</a></li>
+<li class="toctree-l2"><a class="reference internal" href="LFP_to_bursts.html#burst-detection-and-classification">Burst detection and classification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="output.html#results-hdf5">Results (HDF5)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="output.html#quality-control-figures">Quality control figures</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="access_results.html">Accessing results</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="access_results.html#python">Python</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_results.html#matlab">Matlab</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="access_metadata.html">Accessing metadata and diagnostics metrics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#odml">odML</a></li>
+<li class="toctree-l2"><a class="reference internal" href="access_metadata.html#yaml">YAML</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</section>
+<section id="todolist">
+<h1>Todolist<a class="headerlink" href="#todolist" title="Permalink to this heading"></a></h1>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="getting_started.html" class="btn btn-neutral float-right" title="Getting started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Katharina Heining.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

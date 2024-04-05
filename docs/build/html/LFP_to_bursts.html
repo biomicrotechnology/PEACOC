@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EA detection and classification &mdash; PEACOC 0.0.1 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=80d5e7a1" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=19f00094" />
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=f6245a2f"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+        <script async="async" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Output" href="output.html" />
+    <link rel="prev" title="Preprocessing" href="preprocessing.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            PEACOC
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="getting_started.html">Getting started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="setting_parameters.html">Setting parameters</a></li>
+<li class="toctree-l1"><a class="reference internal" href="preprocessing.html">Preprocessing</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">EA detection and classification</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#spike-detection">Spike detection</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#spectral-spike-detection-interactive">Spectral spike detection (interactive)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#spike-sorting-interactive">Spike sorting (interactive)</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#burst-detection-and-classification">Burst detection and classification</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="output.html">Output</a></li>
+<li class="toctree-l1"><a class="reference internal" href="access_results.html">Accessing results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="access_metadata.html">Accessing metadata and diagnostics metrics</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">PEACOC</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">EA detection and classification</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/LFP_to_bursts.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="ea-detection-and-classification">
+<span id="lfp-to-bursts"></span><h1>EA detection and classification<a class="headerlink" href="#ea-detection-and-classification" title="Permalink to this heading"></a></h1>
+<p>Spike detection and burst detection/classification are called with a single command. If you are not interested in bursts and
+prefer to just run the spike detection you can do so by excluding <cite>BurstClassificaton</cite> from the list of <cite>analysis:run</cite> in
+the parameter file at the template or recording specific level (see <a class="reference internal" href="setting_parameters.html#setting-parameters"><span class="std std-ref">Setting parameters</span></a>):</p>
+<a class="reference internal image-reference" href="_images/setting_run.png"><img alt="_images/setting_run.png" class="align-center" src="_images/setting_run.png" style="width: 500px;" /></a>
+<p><a class="reference internal" href="#spike-detection"><span class="std std-ref">Spike detection</span></a> is followed by <a class="reference internal" href="#burst-classification"><span class="std std-ref">burst classification</span></a>.
+Spike detection consists of three consecutive steps: <em>spectral spike detection</em> (the main step) complemented by
+<em>amplitude based spike detection</em> for reducing false negatives and <em>spike sorting</em> for reducing false positives.
+Amplitude based spike detection and burst classificaton runs fully automatically.
+For spectral spike detection and spike sorting there is a <strong>GUI</strong> that allows you to set parameters manually.
+Depending on whether you want to use the GUI or rely on default parameters, have <cite>interactive</cite> set to True or False in the
+parameter file:</p>
+<a class="reference internal image-reference" href="_images/setting_interactive.png"><img alt="_images/setting_interactive.png" class="align-center" src="_images/setting_interactive.png" style="width: 300px;" /></a>
+<p>Execute the spike detection and burst classification through the command-line:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&gt;</span> <span class="n">python</span> <span class="n">PEACOC</span><span class="o">/</span><span class="n">runthrough</span><span class="o">/</span><span class="n">LFPtoBursts</span><span class="o">.</span><span class="n">py</span> <span class="n">run_params</span><span class="o">/</span><span class="n">my_recording_params</span><span class="o">.</span><span class="n">yml</span>
+</pre></div>
+</div>
+<p>Now your PC may be busy for a few minutes (about 3 min for a 2h recording on an ok Laptop). If you chose not to use a GUI (interactive:False)
+nothing will pop up and you can skip forward to <a class="reference internal" href="output.html#output"><span class="std std-ref">Output</span></a>:</p>
+<section id="spike-detection">
+<span id="id1"></span><h2>Spike detection<a class="headerlink" href="#spike-detection" title="Permalink to this heading"></a></h2>
+<section id="spectral-spike-detection-interactive">
+<span id="spikes-spectral"></span><h3>Spectral spike detection (interactive)<a class="headerlink" href="#spectral-spike-detection-interactive" title="Permalink to this heading"></a></h3>
+<p>Using the GUI for spectral spike detection (EdDetection:interactive:True in the parameter file) two windows will pop up.
+The first window shows <span class="math notranslate nohighlight">\(n(\theta)\)</span>, i.e. the number of spikes as a function of the spectral threshold.
+The two lines indicate what the algorithm interprets as sensible thresholds. By default, <cite>firstcross</cite> (the beginning
+of the plateau region, corresponding to <span class="math notranslate nohighlight">\(\theta_a\)</span> in the <em>paper_</em>)
+would be chosen, but also <cite>bump</cite> (the middle of the plateau, corresponding to <span class="math notranslate nohighlight">\(\theta_b\)</span>) might be a good choice.</p>
+<a class="reference internal image-reference" href="_images/threshdet_ntheta.png"><img alt="_images/threshdet_ntheta.png" class="align-center" src="_images/threshdet_ntheta.png" style="width: 500px;" /></a>
+<p>The second window displays the <em>LFP</em> (bottom), the <em>normalized spectral sum</em> to which the threshold is applied (middle, thresholds
+shown as horizontal lines) and the <em>spikes detected</em> when applying the threshold (top).</p>
+<a class="reference internal image-reference" href="_images/threshdet_trace.png"><img alt="_images/threshdet_trace.png" class="align-center" src="_images/threshdet_trace.png" style="width: 700px;" /></a>
+<p>Zoom around in this window to see how happy you are with the performances of each of the thresholds:</p>
+<a class="reference internal image-reference" href="_images/threshdet_trace_zoom.png"><img alt="_images/threshdet_trace_zoom.png" class="align-center" src="_images/threshdet_trace_zoom.png" style="width: 700px;" /></a>
+<p>And by the way, the missing values in the normalized spectral sum in this example are due to the artifact we had assigned
+in this region:</p>
+<a class="reference internal image-reference" href="_images/threshdet_trace_holeAtArtifact.png"><img alt="_images/threshdet_trace_holeAtArtifact.png" class="align-center" src="_images/threshdet_trace_holeAtArtifact.png" style="width: 700px;" /></a>
+<p><strong>Manually adding a threshold:</strong> In case you are unhappy with the performance of <cite>firstcross</cite> and <cite>bump</cite>, you can add a
+custom threshold yourself by a <cite>double right click</cite> on <span class="math notranslate nohighlight">\(n(\theta)\)</span> in the first window:</p>
+<a class="reference internal image-reference" href="_images/threshdet_nthetaMan.png"><img alt="_images/threshdet_nthetaMan.png" class="align-center" src="_images/threshdet_nthetaMan.png" style="width: 500px;" /></a>
+<p>In this case we added a threshold (green) between <cite>firstcross</cite> and <cite>bump</cite>. Upon adding a new threshold for inspection
+it will also show up in the second window, so you can judge its performance:</p>
+<a class="reference internal image-reference" href="_images/threshdet_trace_zoomMan.png"><img alt="_images/threshdet_trace_zoomMan.png" class="align-center" src="_images/threshdet_trace_zoomMan.png" style="width: 700px;" /></a>
+<p><strong>Picking a threshold:</strong> For setting a threshold click the respective checkbox. Here we pick our manual threshold <cite>man1</cite>:</p>
+<a class="reference internal image-reference" href="_images/threshdet_nthetaManDecision.png"><img alt="_images/threshdet_nthetaManDecision.png" class="align-center" src="_images/threshdet_nthetaManDecision.png" style="width: 150px;" /></a>
+<p>To finish the spectral spike detection, click the blue <cite>Done</cite> button in the first window.</p>
+<div class="admonition important">
+<p class="admonition-title">Important</p>
+<p>I highly recommend to be rather liberal with the threshold at this stage, ie. opt for a rather low threshold such as
+<cite>firstcross</cite> and dont worry about some false positives. False positives will later be removed through <a class="reference internal" href="#spikesorting"><span class="std std-ref">Spike sorting (interactive)</span></a>.</p>
+</div>
+</section>
+<section id="spike-sorting-interactive">
+<span id="spikesorting"></span><h3>Spike sorting (interactive)<a class="headerlink" href="#spike-sorting-interactive" title="Permalink to this heading"></a></h3>
+<p>With spike sorting we try to detect (and later remove) false positives through clustering waveforms.
+If you are in interactive mode for spike sorting (SpikeSorting:interactive:True in the parameter file), two more windows
+will pop up now. The panels of the first window show the clusters (waveforms of individual spikes as thin yellowish lines,
+average waveforms in colors). The clusters are arranged descending from highest to lowest peak-to-peak (PTP) amplitude of the average
+waveform. By default the cluster with the lowest PTP amplitude would be discharded (cluster 5 shown in red):</p>
+<a class="reference internal image-reference" href="_images/sorting_clusts.png"><img alt="_images/sorting_clusts.png" class="align-center" src="_images/sorting_clusts.png" style="width: 700px;" /></a>
+<p>The second window shows the LFP trace with spikes annotated (colored vertical lines) according to the cluster to which they were assigned.
+The grey lines indicate spikes that had not been subjected to clustering because they occurred in dense <em>groups</em> and thus their waveforms
+could not be separated (we do not worry too much about false positive detections in dense bursts, as they have only very minor influence
+on burst classification in the end). The area shaded in yellow marks the region we excluded from analyses by assigning an <a class="reference internal" href="preprocessing.html#artifacts"><span class="std std-ref">artifact</span></a>.</p>
+<a class="reference internal image-reference" href="_images/sorting_trace.png"><img alt="_images/sorting_trace.png" class="align-center" src="_images/sorting_trace.png" style="width: 700px;" /></a>
+<p>To have a closer look at the spikes in their natural habitat, let’s zoom around in the second window:</p>
+<a class="reference internal image-reference" href="_images/sorting_traceZoom1.png"><img alt="_images/sorting_traceZoom1.png" class="align-center" src="_images/sorting_traceZoom1.png" style="width: 700px;" /></a>
+<p>I think clusters 1 to 3 look really decent and cluster 5 clearly is a false positive. But what what about cluster 4?</p>
+<p><strong>Marking waveforms for further inspection:</strong> There are really few cluster 4 spikes, and it is hard to spot them in the LFP trace (second window).
+So let’s mark one of those suspicious waveforms by a <cite>left click</cite> in the first window. The waveform now turns cyan:</p>
+<a class="reference internal image-reference" href="_images/sorting_clust_marked.png"><img alt="_images/sorting_clust_marked.png" class="align-center" src="_images/sorting_clust_marked.png" style="width: 700px;" /></a>
+<p>… and the waveform gets marked by a cyan triangle in the second window:</p>
+<a class="reference internal image-reference" href="_images/sorting_trace_marked.png"><img alt="_images/sorting_trace_marked.png" class="align-center" src="_images/sorting_trace_marked.png" style="width: 500px;" /></a>
+<p>Let’s zoom in on this:</p>
+<a class="reference internal image-reference" href="_images/sorting_trace_marked_zoom.png"><img alt="_images/sorting_trace_marked_zoom.png" class="align-center" src="_images/sorting_trace_marked_zoom.png" style="width: 700px;" /></a>
+<p>Oh dear, the spikes of cluster 4 appear to belong to an artifact that we did not exclude. To be super correct, we should now
+<a class="reference internal" href="preprocessing.html#adding-artifacts-manually"><span class="std std-ref">edit the artifact file manually</span></a>. But as this is serves for demonstration purposes only,
+let’s content ourselves with annotating the spikes belonging to cluster 4 as false positives too.</p>
+<p><strong>Picking noise clusters:</strong> You can remove clusters as noise by checking the corresponding check boxes in the first window.
+In our case, we select clusters 4 and 5 to be discarded as false positives.</p>
+<a class="reference internal image-reference" href="_images/sorting_clust_selection.png"><img alt="_images/sorting_clust_selection.png" class="align-center" src="_images/sorting_clust_selection.png" style="width: 700px;" /></a>
+<p>By clicking the blue <cite>Done</cite> button, we save our choice and finish this procedure.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>If you selected <strong>mixed polarity</strong> when <a class="reference internal" href="preprocessing.html#polarity"><span class="std std-ref">assiging the polarity</span></a>, you will see two rows of clusters, one for positive and one for negative polarity.
+Likewise, the LFP trace will be annotated with spikes belonging to positive clusters (above the zero line) and spikes belonging to negative clusters (below
+the zero line). By default the fifth cluster of both negative and positive clusters will be discarded. You can choose separately for
+for positive and negative clusters which clusters to discharge as false positives.</p>
+</div>
+</section>
+</section>
+<section id="burst-detection-and-classification">
+<span id="burst-classification"></span><h2>Burst detection and classification<a class="headerlink" href="#burst-detection-and-classification" title="Permalink to this heading"></a></h2>
+<p>The burst classification runs fully automatically by projecting detected spike bursts on a predefined <em>self-organizing map</em> (SOM). For the <em>intrahippocampal
+kainate mouse model</em> we once calculated a <strong>reference SOM</strong> on which we project all new datasets. This worked well so far and we included the reference SOM in
+the toolbox (path: <em>PEACOC/config/som.h5</em>).
+If you use a different kind of animal model with different types of bursts, you might want to select other features and derive your own SOM.
+To calculate the SOM itself we used the <a class="reference external" href="http://matias-ck.com/mlz/somz.html">SOMz-package</a> by
+Carrasco Kind and Brunner (“SOMz: photometric redshift PDFs with self-organizing maps and random atlas”, doi:10.1093/mnras/stt2456).
+You can use a your own SOM for the projection method by setting the path to your SOM in the parameter file:</p>
+<a class="reference internal image-reference" href="_images/SOM_path.png"><img alt="_images/SOM_path.png" class="align-center" src="_images/SOM_path.png" style="width: 500px;" /></a>
+</section>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="preprocessing.html" class="btn btn-neutral float-left" title="Preprocessing" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="output.html" class="btn btn-neutral float-right" title="Output" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, Katharina Heining.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
